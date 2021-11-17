@@ -29,44 +29,88 @@
                 <input type="number" name="list_id" value="1">
                 <button>Nouvelle carte</button>
             </form>
+            
             <button class="button is-success" id="addListButton">
                 <span class="icon is-small">
                     <i class="fas fa-plus"></i>
                 </span>
                 &nbsp; Ajouter une liste
             </button>
-            <!-- <script type="text/javascript">alert("ue")</script> -->
-            <!-- <button id="showLabelsButton">Afficher les labels</button>  -->
+
+            <div class="columns">
+
+                <div class="column is-full">
+                    <div class="card-lists columns" id="listsWrapper">
+
+                        <template id="listTemplate">
+                            <div class="column is-one-quarter panel" data-list-id="A">
+                            <div class="panel-heading has-background-info">
+                                <div class="columns">
+
+                                    <div class="column">
+                                        <h2 class="has-text-white" id="listName">Perso</h2>
+
+                                        <form action="" method="POST" class="is-hidden">
+                                            <input type="hidden" name="list-id" value="1">
+                                            <div class="field has-addons">
+                                                <div class="control">
+                                                    <input type="text" class="input is-small" name="list-name" value=""
+                                                        placeholder="Nom de la liste">
+                                                </div>
+                                                <div class="control">
+                                                    <button class="button is-small is-success">Valider</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="column is-narrow">
+                                        <a href="#" class="is-pulled-right">
+                                            <span class="icon is-small has-text-white">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-block is-block has-background-light">
+                            </div>
+                        </div>
+                        </template>
+                        <!-- SLOT FOR LISTS -->
+                    </div>
+                </div>
+            </div>
 
             <div class="modal" id="addListModal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <form action="" method="POST">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Ajouter une liste</p>
-                    <button class="delete close" type="button" aria-label="close"></button>
-                </header>
-                <section class="modal-card-body">
-                    <div class="field">
-                        <label class="label">Nom</label>
-                        <div class="control">
-                            <input type="text" class="input" name="name" value="" placeholder="Nom de la liste">
-                        </div>
-                    </div>
-                </section>
-                <footer class="modal-card-foot">
-                    <button class="button is-success">Save changes</button>
-                    <button class="button close" type="button">Cancel</button>
-                </footer>
-            </form>
-        </div>
-    </div>
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <form method="POST">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Ajouter une liste</p>
+                            <button class="delete close" type="button" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <div class="field">
+                                <label class="label">Nom</label>
+                                <div class="control">
+                                    <input type="text" class="input" name="name" value="" placeholder="Nom de la liste">
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button class="button is-success" id="saveListsChanges">Save changes</button>
+                            <button class="button close" type="button">Cancel</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
 
 
-    </main>
-    <footer>
+        </main>
+        <footer>
 
-    </footer>
+        </footer>
     </div>
     <script type="text/javascript" src="js/app.js"></script>
     <!-- <script type="text/javascript" src="js/app.js"></script> -->
