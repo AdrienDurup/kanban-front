@@ -1,5 +1,6 @@
 //import {Card} from "./components/card.js";
 //import {List} from "./components/list.js";
+
 function addCard(parent, content, classes = "", mustAppend = true) {
     const dom = document.createElement("article");
     dom.classList = classes;
@@ -108,12 +109,12 @@ const app = {
     },
     makeListInDOM: (list) => {
         const template = document.getElementById("listTemplate");
-        console.log(template);
-        console.log(template.content);
-        const title=template.content.getElementById("listName");
-        title.textContent=list.name;
-        const container=document.getElementById("listsWrapper");
-        container.prepend(template.content);
+        const clone = document.importNode(template.content, true);
+        const title = clone.getElementById("listName");
+        console.log(list);
+        title.textContent = list.name;
+        const container = document.getElementById("listsWrapper");
+        container.prepend(clone);
     },
 
     addListeners: () => {
@@ -140,11 +141,12 @@ const app = {
             for (const key of keys) {
                 dataToSend[key] = data.get(key);
             };
-            const list = await fetch("http://localhost:1664/rest/list", {
+            let list = await fetch("http://localhost:1664/rest/list", {
                 headers: { "Content-Type": "application/json; charset=utf-8" },
                 method: 'POST',
                 body: JSON.stringify(dataToSend)
             });
+            list=await list.json();
             app.makeListInDOM(list);
         });
     },
