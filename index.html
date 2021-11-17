@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>oKanBan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- <script type="text/javascript" src="test.js"></script> -->
+    <div class="page_container">
+        <header class="header">
+            <h1 class="page_title">
+                oKanBan
+            </h1>
+        </header>
+        <main class="contentWrapper" id="contentWrapper">
+            <form method="POST" action="http://localhost:1664/rest/label">
+                <input type="text" name="name" placeholder="tag name">
+                <button>nouveau label</button>
+            </form>
+            <form method="POST" action="http://localhost:1664/rest/card">
+                <input type="text" name="content" placeholder="card content">
+                <input type="number" name="position" value="0">
+                <input type="number" name="list_id" value="1">
+                <button>Nouvelle carte</button>
+            </form>
+            <button class="button is-success" id="addListButton">
+                <span class="icon is-small">
+                    <i class="fas fa-plus"></i>
+                </span>
+                &nbsp; Ajouter une liste
+            </button>
+            <!-- <script type="text/javascript">alert("ue")</script> -->
+            <!-- <button id="showLabelsButton">Afficher les labels</button>  -->
+
+            <div class="modal" id="addListModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <form action="" method="POST">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Ajouter une liste</p>
+                    <button class="delete close" type="button" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="field">
+                        <label class="label">Nom</label>
+                        <div class="control">
+                            <input type="text" class="input" name="name" value="" placeholder="Nom de la liste">
+                        </div>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success">Save changes</button>
+                    <button class="button close" type="button">Cancel</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+
+
+    </main>
+    <footer>
+
+    </footer>
+    </div>
+    <script type="text/javascript" src="js/app.js"></script>
+    <!-- <script type="text/javascript" src="js/app.js"></script> -->
+</body>
+
+</html>
