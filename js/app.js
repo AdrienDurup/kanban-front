@@ -112,11 +112,16 @@ const app = {
                 const test=app.setRequest("PATCH", dataToSend);
                 console.log(test);
                 await fetch(route, app.setRequest("PATCH", dataToSend));
+                title.textContent= dataToSend.name;
             } catch (e) {
 
             };
         });
         title.addEventListener("dblclick", (e) => {
+            
+            app.hideElement(e.target);
+            const trashcan=e.target.parentElement.querySelector(".deleteList");
+            app.hideElement(trashcan);
             const modify = e.target.parentElement.querySelector(".modifyList");
             app.showElement(modify);
         });
@@ -197,6 +202,10 @@ const app = {
             if (!e.target.classList.contains("modifyListInput")) {
                 const modifyListForms = document.querySelectorAll(".modifyList");
                 modifyListForms.forEach((el) => { app.hideElement(el) });
+                const listNames = document.querySelectorAll(".listName");
+                listNames.forEach((el) => { app.showElement(el) });
+                const trashcans=document.querySelectorAll(".deleteList");
+                trashcans.forEach((el) => { app.showElement(el) });
             };
         });
 
