@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>oKanban</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
-    <title>oKanban</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
     <section class="section ">
         <div class="container">
-            <h1 class="title">
-                oKanban
-            </h1>
-
-            <form>
-
-                <input placeholder="name" id="name">
-            </form>
             <div class="columns">
-
+                <h1 class="title column">
+                    oKanban
+                </h1>
+                <button class="column button is-success" id="addListButton">
+                    <span class="icon is-small">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    &nbsp; Ajouter une liste
+                </button>
+            </div>
+            <div class="columns">
                 <div class="column is-full">
                     <div class="card-lists columns">
                         <!-- list -->
@@ -205,15 +207,6 @@
                         <!--/ list -->
                     </div>
                 </div>
-                <div class="column">
-                    <button class="button is-success" id="addListButton">
-                        <span class="icon is-small">
-                            <i class="fas fa-plus"></i>
-                        </span>
-                        &nbsp; Ajouter une liste
-                    </button>
-                </div>
-
             </div>
         </div>
     </section>
@@ -242,6 +235,7 @@
         </div>
     </div>
 
+    <!-- Chargement de mon fichier JS -->
     <script src="./assets/js/app.js"></script>
 </body>
 
