@@ -1,36 +1,33 @@
-//import {Card} from "./components/card.js";
-//import {List} from "./components/list.js";
-
-function addCard(parent, content, classes = "", mustAppend = true) {
-    const dom = document.createElement("article");
-    dom.classList = classes;
-    dom.textContent = content;
-    if (mustAppend) {
-        parent.appendChild(dom);
-    } else {
-        parent.prependChild(dom);
-    };
-    return dom;
-}
-function addList(parent, name, classes = { title: "", wrapper: "", content: "" }, mustAppend = true) {
-    const dom = document.createElement("section");
-    const title = document.createElement("h3");
-    title.textContent = name;
-    title.classList = classes.title;
-    dom.content = document.createElement("div");
-    dom.content.classList = classes.content;
-    dom.appendChild(title);
-    dom.appendChild(dom.content);
-    dom.classList = classes.wrapper;
-    if (mustAppend) {
-        parent.appendChild(dom);
-    } else {
-        parent.prependChild(dom);
-    };
-    return dom;
-}
-
 const restRoot = "http://localhost:1664/rest";
+
+// function addCard(parent, content, classes = "", mustAppend = true) {
+//     const dom = document.createElement("article");
+//     dom.classList = classes;
+//     dom.textContent = content;
+//     if (mustAppend) {
+//         parent.appendChild(dom);
+//     } else {
+//         parent.prependChild(dom);
+//     };
+//     return dom;
+// }
+// function addList(parent, name, classes = { title: "", wrapper: "", content: "" }, mustAppend = true) {
+//     const dom = document.createElement("section");
+//     const title = document.createElement("h3");
+//     title.textContent = name;
+//     title.classList = classes.title;
+//     dom.content = document.createElement("div");
+//     dom.content.classList = classes.content;
+//     dom.appendChild(title);
+//     dom.appendChild(dom.content);
+//     dom.classList = classes.wrapper;
+//     if (mustAppend) {
+//         parent.appendChild(dom);
+//     } else {
+//         parent.prependChild(dom);
+//     };
+//     return dom;
+// }
 
 const app = {
     setLabelForm: () => {
@@ -82,26 +79,50 @@ const app = {
         const listMainDev = clone.querySelector(`[data-list-id="A"]`);
         listMainDev.setAttribute("data-list-id", list.id);
         const title = clone.querySelector(".listName");
+        title.textContent = list.name;
         const content = clone.querySelector(".listContent");
         // console.log(title);
         const plus = clone.querySelector(".fa-plus");
+
+        /* Gestion du bouton + pour ajouter une carte */
         plus.addEventListener("click", (e) => {
             // console.log(e);
             app.triggerModal("Card", { card_listId: list.id });
         });
+        /* gestion du bouton poubelle pour supprimer une liste */
         const trashcan = clone.querySelector(".deleteList");
         trashcan.addEventListener("submit", async (e) => {
             e.preventDefault();
             const route = `${restRoot}/list/${list.id}`;
-            fetch(route,{
+            fetch(route, {
                 headers: { "Content-Type": "application/json; charset=utf-8" },
                 method: 'DELETE',
-                body: JSON.stringify({id:list.id})
+                body: JSON.stringify({ id: list.id })
             })
             app.deleteListFromDOM(list.id);
         });
+        /* gestion du formulaire pour modifier le titre */
+        const modify = clone.querySelector(".modifyList");
+        modify.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const dataToSend = app.formToJson(e.target);
+                const route = `${restRoot}/list/${list.id}`;
+                console.log(route);
+                const test=app.setRequest("PATCH", dataToSend);
+                console.log(test);
+                await fetch(route, app.setRequest("PATCH", dataToSend));
+            } catch (e) {
 
-        title.textContent = list.name;
+            };
+        });
+        title.addEventListener("dblclick", (e) => {
+            const modify = e.target.parentElement.querySelector(".modifyList");
+            app.showElement(modify);
+        });
+
+
+
         const container = document.getElementById("listsWrapper");
         document.getElementById("addListButton").before(clone);
         // container;
@@ -113,7 +134,7 @@ const app = {
         };
     },
     deleteListFromDOM: (listId) => {
-        const DOMlist=document.querySelector(`[data-list-id="${listId}"]`);
+        const DOMlist = document.querySelector(`[data-list-id="${listId}"]`);
         DOMlist.parentElement.removeChild(DOMlist);
     },
     makeCardInDOM: (card) => {
@@ -126,6 +147,29 @@ const app = {
         console.log(list);
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
+    },
+    setRequest: (method, data) => {
+        return {
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+            method: method,
+            body: JSON.stringify(data)
+        }
+    },
+    formToJson: (form) => {
+        const data = new FormData(form);
+        const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
+        const dataToSend = {};
+        //On réucupère les données du formulaire
+        for (const key of keys) {
+            dataToSend[key] = data.get(key);
+        };
+        return dataToSend;
+    },
+    showElement: (DOMobject) => {
+        DOMobject.classList.remove(`is-hidden`);
+    },
+    hideElement: (DOMobject) => {
+        DOMobject.classList.add(`is-hidden`);
     },
     triggerModal: (name, data = {}) => {
         console.log("running");
@@ -147,6 +191,16 @@ const app = {
     },
     addListeners: () => {
 
+        /* gestion du click dans la fenetre */
+        document.addEventListener("click", (e) => {
+            /* si on clique en dehors d’un form de modification de titre de liste, on les ferme tous */
+            if (!e.target.classList.contains("modifyListInput")) {
+                const modifyListForms = document.querySelectorAll(".modifyList");
+                modifyListForms.forEach((el) => { app.hideElement(el) });
+            };
+        });
+
+        /* gestion du bouton ajouter des listes */
         const button = document.getElementById("addListButton");
         button.addEventListener("click", (e) => {
             app.triggerModal("List");
@@ -169,13 +223,7 @@ const app = {
             console.log(modal);
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const data = new FormData(e.target);
-                const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
-                const dataToSend = {};
-                //On réucupère les données du formulaire
-                for (const key of keys) {
-                    dataToSend[key] = data.get(key);
-                };
+                const dataToSend = app.formToJson(e.target);
                 /* On récupère la prochaine position de fin*/
                 const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
                 dataToSend.position = position;
