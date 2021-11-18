@@ -10,3 +10,7 @@ input{
     button:hover{
         color: gray;
     }
+    .ad_button-reset{
+        background-color: unset;
+        box-shadow: unset;
+    }

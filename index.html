@@ -8,6 +8,8 @@
     <title>oKanBan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script defer src="https://kit.fontawesome.com/06c14c0baa.js" crossorigin="anonymous"></script>
+    <!-- <script defer src="https://use.@fontawesome.com/releases/v5.3.1/js/all.js"></script> -->
 </head>
 
 <body>
@@ -23,19 +25,6 @@
                 <input type="text" name="name" placeholder="tag name">
                 <button>nouveau label</button>
             </form>
-            <form method="POST" action="http://localhost:1664/rest/card">
-                <input type="text" name="content" placeholder="card content">
-                <input type="number" name="position" value="0">
-                <input type="number" name="list_id" value="1">
-                <button>Nouvelle carte</button>
-            </form>
-
-            <button class="button is-success" id="addListButton">
-                <span class="icon is-small">
-                    <i class="fas fa-plus"></i>
-                </span>
-                &nbsp; Ajouter une liste
-            </button>
 
             <div class="columns">
 
@@ -44,15 +33,27 @@
 
                         <!-- LIST template -->
                         <template id="listTemplate">
-                            <div class="column is-one-quarter panel" data-list-id="A">
+                            <div class="column is-one-quarter panel sharedIdForList" data-list-id="A">
                                 <div class="panel-heading has-background-info">
                                     <div class="columns">
 
                                         <div class="column">
-                                            <h2 class="has-text-white" id="listName"></h2>
+                                            <!-- LIST NAME -->
+                                            <h2 class="has-text-white is-inline listName"> </h2>
+                                            <!-- DELETION OF LIST-->
+                                            <form class="is-inline deleteList">
+                                                <button class="ad_button-reset">
+                                                    <span class="icon is-small has-text-danger">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </span>
+                                                </button>
 
-                                                <form action="" method="POST" class="is-hidden">
-                                                <input type="hidden" name="list_id" id="list_id">
+                                            </form>
+
+
+
+                                            <form action="" method="POST" class="is-hidden">
+                                                <!-- <input type="hidden" name="list-id"> -->
                                                 <div class="field has-addons">
                                                     <div class="control">
                                                         <input type="text" class="input is-small" name="list-name"
@@ -68,7 +69,7 @@
                                         <div class="column is-narrow">
                                             <a href="#" class="is-pulled-right">
                                                 <span class="icon is-small has-text-white">
-                                                    <i class="fas fa-plus">+</i>
+                                                    <i class="fas fa-plus"></i>
                                                 </span>
                                             </a>
                                         </div>
@@ -79,32 +80,42 @@
                             </div>
                         </template>
 
-                        <!-- CARD template -->
-                        <template id="cardTemplate">
-                           <div class="box" data-card-id="J">
-                                    <div class="columns">
-                                        <div class="column" id="cardContent">
-     
-                                        </div>
-                                        <div class="column is-narrow">
-                                            <a href="#">
-                                                <span class="icon is-small has-text-primary">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-                                            </a>
-                                            <a href="#">
-                                                <span class="icon is-small has-text-danger">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                        </template>
+                        <!-- NEW LIST button -->
+                        <button class="column is-one-quarter button is-success" id="addListButton">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            &nbsp; Ajouter une liste
+                        </button>
 
                     </div>
                 </div>
             </div>
+
+
+            <!-- CARD template -->
+            <template id="cardTemplate">
+                <div class="box sharedIdForCard" data-card-id="J">
+                    <div class="columns">
+                        <div class="column cardContent">
+
+                        </div>
+                        <div class="column is-narrow">
+                            <a href="#">
+                                <span class="icon is-small has-text-primary">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                            </a>
+                            <a href="#">
+                                <span class="icon is-small has-text-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
 
             <div class="modal" id="addListModal">
                 <div class="modal-background"></div>

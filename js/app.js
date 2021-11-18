@@ -80,8 +80,8 @@ const app = {
         const clone = document.importNode(template.content, true);
         // console.log(clone);
         const listMainDev = clone.querySelector(`[data-list-id="A"]`);
-        listMainDev.setAttribute("data-list-id",list.id);
-        const title = clone.getElementById("listName");
+        listMainDev.setAttribute("data-list-id", list.id);
+        const title = clone.querySelector(".listName");
         const content = clone.querySelector(".listContent");
         // console.log(title);
         const plus = clone.querySelector(".fa-plus");
@@ -89,22 +89,40 @@ const app = {
             // console.log(e);
             app.triggerModal("Card", { card_listId: list.id });
         });
+        const trashcan = clone.querySelector(".deleteList");
+        trashcan.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const route = `${restRoot}/list/${list.id}`;
+            fetch(route,{
+                headers: { "Content-Type": "application/json; charset=utf-8" },
+                method: 'DELETE',
+                body: JSON.stringify({id:list.id})
+            })
+            app.deleteListFromDOM(list.id);
+        });
+
         title.textContent = list.name;
         const container = document.getElementById("listsWrapper");
-        container.prepend(clone);
+        document.getElementById("addListButton").before(clone);
+        // container;
+        // container.appendChild(clone);
         if (list.cards) {
             for (const el of list.cards) {
-                app.makeCardInDOM(list.id, el);
+                app.makeCardInDOM(el);
             };
         };
     },
-    makeCardInDOM: (listId, card) => {
+    deleteListFromDOM: (listId) => {
+        const DOMlist=document.querySelector(`[data-list-id="${listId}"]`);
+        DOMlist.parentElement.removeChild(DOMlist);
+    },
+    makeCardInDOM: (card) => {
         const template = document.getElementById("cardTemplate");
         const clone = document.importNode(template.content, true);
-        const content = clone.getElementById("cardContent");
+        const content = clone.querySelector(".cardContent");
         console.log(content);
         content.textContent = card.content;
-        const list = document.querySelector(`[data-list-id="${listId}"]`);
+        const list = document.querySelector(`[data-list-id="${card.list_id}"]`);
         console.log(list);
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
@@ -122,8 +140,10 @@ const app = {
         };
         modal.classList.add("is-active");
     },
-    killModal: (modal) => {
-        modal.classList.remove("is-active");
+    killModal: () => {
+        /* kill toutes les modales */
+        const modals = document.querySelectorAll(".modal.is-active");
+        modals.forEach(el => { el.classList.remove("is-active") });
     },
     addListeners: () => {
 
@@ -142,7 +162,7 @@ const app = {
             // console.log("close", closeButtons);
             for (const button of closeButtons) {
                 button.addEventListener("click", (e) => {
-                    app.killModal(modal);
+                    app.killModal();
                 });
             };
 
@@ -152,9 +172,17 @@ const app = {
                 const data = new FormData(e.target);
                 const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
                 const dataToSend = {};
+                //On réucupère les données du formulaire
                 for (const key of keys) {
                     dataToSend[key] = data.get(key);
                 };
+                /* On récupère la prochaine position de fin*/
+                const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
+                dataToSend.position = position;
+                console.log(position, dataToSend.position);
+                if (!dataToSend.position)
+                    return;
+
                 console.log(dataToSend);
                 let res = await fetch(`${restRoot}/${el.toLowerCase()}`, {
                     headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -167,11 +195,11 @@ const app = {
                         app[`make${el}InDOM`](res);
                         break;
                     case "Card":
-                        app[`make${el}InDOM`](dataToSend.list_id, res);
+                        app[`make${el}InDOM`](res);
                         /* todo */
                         break;
                 };
-                app.killModal(modal);
+                app.killModal();
             });
         };
 
