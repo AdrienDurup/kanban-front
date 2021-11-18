@@ -30,24 +30,6 @@ function addList(parent, name, classes = { title: "", wrapper: "", content: "" }
     return dom;
 }
 
-function addList(parent, name, classes = { title: "", wrapper: "", content: "" }, mustAppend = true) {
-    const dom = document.createElement("section");
-    const title = document.createElement("h3");
-    title.textContent = name;
-    title.classList = classes.title;
-    dom.content = document.createElement("div");
-    dom.content.classList = classes.content;
-    dom.appendChild(title);
-    dom.appendChild(dom.content);
-    dom.classList = classes.wrapper;
-    if (mustAppend) {
-        parent.appendChild(dom);
-    } else {
-        parent.prependChild(dom);
-    };
-    return dom;
-}
-
 const restRoot = "http://localhost:1664/rest";
 
 const app = {
@@ -90,65 +72,110 @@ const app = {
         const result = await fetch(`${restRoot}/list`);
         const lists = await result.json();
         for (const el of lists) {
-            const wrapper = document.getElementById("listsWrapper");
-            const styles = {
-                title: "panel-heading has-background-info has-text-white",
-                content: "panel-block is-block has-background-light",
-                wrapper: "column is-one-quarter panel"
-            }
-            const list = addList(wrapper, el.name, styles);
-            for (const card of el.cards) {
-                addCard(list.content, card.content, "box column is-narrow");
-            };
-
+            app.makeListInDOM(el);
         };
-        app.drawCards();
-    },
-    drawCards: () => {
-
     },
     makeListInDOM: (list) => {
         const template = document.getElementById("listTemplate");
         const clone = document.importNode(template.content, true);
+        // console.log(clone);
+        const listMainDev = clone.querySelector(`[data-list-id="A"]`);
+        listMainDev.setAttribute("data-list-id",list.id);
         const title = clone.getElementById("listName");
-        console.log(list);
+        const content = clone.querySelector(".listContent");
+        // console.log(title);
+        const plus = clone.querySelector(".fa-plus");
+        plus.addEventListener("click", (e) => {
+            // console.log(e);
+            app.triggerModal("Card", { card_listId: list.id });
+        });
         title.textContent = list.name;
         const container = document.getElementById("listsWrapper");
         container.prepend(clone);
+        if (list.cards) {
+            for (const el of list.cards) {
+                app.makeCardInDOM(list.id, el);
+            };
+        };
     },
-
+    makeCardInDOM: (listId, card) => {
+        const template = document.getElementById("cardTemplate");
+        const clone = document.importNode(template.content, true);
+        const content = clone.getElementById("cardContent");
+        console.log(content);
+        content.textContent = card.content;
+        const list = document.querySelector(`[data-list-id="${listId}"]`);
+        console.log(list);
+        const listContent = list.querySelector(".listContent");
+        listContent.appendChild(clone);
+    },
+    triggerModal: (name, data = {}) => {
+        console.log("running");
+        const modal = document.getElementById(`add${name}Modal`);
+        const form = modal.getElementsByTagName("form")[0];
+        console.log(form);
+        if (data) {
+            for (const key in data) {
+                const elem = form.querySelector(`#${key}`);
+                elem.value = data[key];
+            };
+        };
+        modal.classList.add("is-active");
+    },
+    killModal: (modal) => {
+        modal.classList.remove("is-active");
+    },
     addListeners: () => {
+
         const button = document.getElementById("addListButton");
         button.addEventListener("click", (e) => {
-            const modal = document.getElementById("addListModal");
-            modal.classList.add("is-active");
+            app.triggerModal("List");
         });
 
-        const closeButtons = document.getElementsByClassName("close");
-        for (const el of closeButtons) {
-            el.addEventListener("click", (e) => {
-                const modal = document.getElementById("addListModal");
-                modal.classList.remove("is-active");
+
+        for (const el of ["List", "Card"]) {
+
+            const modal = document.getElementById(`add${el}Modal`);
+            const form = modal.getElementsByTagName("form")[0];
+
+            const closeButtons = modal.getElementsByClassName("close");
+            // console.log("close", closeButtons);
+            for (const button of closeButtons) {
+                button.addEventListener("click", (e) => {
+                    app.killModal(modal);
+                });
+            };
+
+            console.log(modal);
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const data = new FormData(e.target);
+                const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
+                const dataToSend = {};
+                for (const key of keys) {
+                    dataToSend[key] = data.get(key);
+                };
+                console.log(dataToSend);
+                let res = await fetch(`${restRoot}/${el.toLowerCase()}`, {
+                    headers: { "Content-Type": "application/json; charset=utf-8" },
+                    method: 'POST',
+                    body: JSON.stringify(dataToSend)
+                });
+                res = await res.json();
+                switch (el) {
+                    case "List":
+                        app[`make${el}InDOM`](res);
+                        break;
+                    case "Card":
+                        app[`make${el}InDOM`](dataToSend.list_id, res);
+                        /* todo */
+                        break;
+                };
+                app.killModal(modal);
             });
         };
-        const listModal = document.getElementById("addListModal").getElementsByTagName("form")[0];
-        console.log(listModal);
-        listModal.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const data = new FormData(e.target);
-            const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
-            const dataToSend = {};
-            for (const key of keys) {
-                dataToSend[key] = data.get(key);
-            };
-            let list = await fetch("http://localhost:1664/rest/list", {
-                headers: { "Content-Type": "application/json; charset=utf-8" },
-                method: 'POST',
-                body: JSON.stringify(dataToSend)
-            });
-            list=await list.json();
-            app.makeListInDOM(list);
-        });
+
+
     },
 
     init: () => {

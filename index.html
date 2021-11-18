@@ -29,7 +29,7 @@
                 <input type="number" name="list_id" value="1">
                 <button>Nouvelle carte</button>
             </form>
-            
+
             <button class="button is-success" id="addListButton">
                 <span class="icon is-small">
                     <i class="fas fa-plus"></i>
@@ -42,42 +42,66 @@
                 <div class="column is-full">
                     <div class="card-lists columns" id="listsWrapper">
 
+                        <!-- LIST template -->
                         <template id="listTemplate">
                             <div class="column is-one-quarter panel" data-list-id="A">
-                            <div class="panel-heading has-background-info">
-                                <div class="columns">
+                                <div class="panel-heading has-background-info">
+                                    <div class="columns">
 
-                                    <div class="column">
-                                        <h2 class="has-text-white" id="listName">Perso</h2>
+                                        <div class="column">
+                                            <h2 class="has-text-white" id="listName"></h2>
 
-                                        <form action="" method="POST" class="is-hidden">
-                                            <input type="hidden" name="list-id" value="1">
-                                            <div class="field has-addons">
-                                                <div class="control">
-                                                    <input type="text" class="input is-small" name="list-name" value=""
-                                                        placeholder="Nom de la liste">
+                                                <form action="" method="POST" class="is-hidden">
+                                                <input type="hidden" name="list_id" id="list_id">
+                                                <div class="field has-addons">
+                                                    <div class="control">
+                                                        <input type="text" class="input is-small" name="list-name"
+                                                            value="" placeholder="Nom de la liste">
+                                                    </div>
+                                                    <div class="control">
+                                                        <button class="button is-small is-success">Valider</button>
+                                                    </div>
                                                 </div>
-                                                <div class="control">
-                                                    <button class="button is-small is-success">Valider</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                            </form>
+                                        </div>
 
-                                    <div class="column is-narrow">
-                                        <a href="#" class="is-pulled-right">
-                                            <span class="icon is-small has-text-white">
-                                                <i class="fas fa-plus"></i>
-                                            </span>
-                                        </a>
+                                        <div class="column is-narrow">
+                                            <a href="#" class="is-pulled-right">
+                                                <span class="icon is-small has-text-white">
+                                                    <i class="fas fa-plus">+</i>
+                                                </span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="panel-block is-block has-background-light listContent">
+                                </div>
                             </div>
-                            <div class="panel-block is-block has-background-light">
-                            </div>
-                        </div>
                         </template>
-                        <!-- SLOT FOR LISTS -->
+
+                        <!-- CARD template -->
+                        <template id="cardTemplate">
+                           <div class="box" data-card-id="J">
+                                    <div class="columns">
+                                        <div class="column" id="cardContent">
+     
+                                        </div>
+                                        <div class="column is-narrow">
+                                            <a href="#">
+                                                <span class="icon is-small has-text-primary">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </span>
+                                            </a>
+                                            <a href="#">
+                                                <span class="icon is-small has-text-danger">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </template>
+
                     </div>
                 </div>
             </div>
@@ -99,13 +123,38 @@
                             </div>
                         </section>
                         <footer class="modal-card-foot">
-                            <button class="button is-success" id="saveListsChanges">Save changes</button>
-                            <button class="button close" type="button">Cancel</button>
+                            <button class="button is-success" id="saveListsChanges">Enregistrer</button>
+                            <button class="button close" type="button">Annuler</button>
                         </footer>
                     </form>
                 </div>
             </div>
 
+            <div class="modal" id="addCardModal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <form method="POST">
+                        <input type="hidden" name="list_id" id="card_listId">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Ajouter une Carte</p>
+                            <button class="delete close" type="button" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <div class="field">
+                                <label class="label">Texte</label>
+                                <div class="control">
+                                    <input type="textarea" class="input" name="content" value=""
+                                        placeholder="Texte de la carte">
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button class="button is-success" id="saveCardsChanges">Enregistrer</button>
+                            <button class="button close" type="button">Annuler</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
 
         </main>
         <footer>
