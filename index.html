@@ -56,11 +56,12 @@
                                                 <!-- <input type="hidden" name="list-id"> -->
                                                 <div class="field has-addons">
                                                     <div class="control">
-                                                        <input type="text" class="input is-small modifyListInput" name="name"
-                                                            value="" placeholder="Nom de la liste">
+                                                        <input type="text" class="input is-small modifyListInput"
+                                                            name="name" value="" placeholder="Nom de la liste">
                                                     </div>
                                                     <div class="control">
-                                                        <button class="button is-small is-success modifyListInput">Valider</button>
+                                                        <button
+                                                            class="button is-small is-success modifyListInput">Valider</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -100,17 +101,38 @@
                         <div class="column cardContent">
 
                         </div>
+
+                        <form action="" method="POST" class="is-hidden modifyCard">
+                            <div class="field has-addons">
+                                <div class="control">
+                                    <input type="textarea" class="input is-small modifyCardInput"
+                                        name="content" value="" placeholder="Votre texte">
+                                </div>
+                                <div class="control">
+                                    <button
+                                        class="button is-small is-success modifyCardInput">Valider</button>
+                                </div>
+                            </div>
+                        </form>
+
+
                         <div class="column is-narrow">
-                            <a href="#">
-                                <span class="icon is-small has-text-primary">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </span>
-                            </a>
-                            <a href="#">
-                                <span class="icon is-small has-text-danger">
-                                    <i class="fas fa-trash-alt"></i>
-                                </span>
-                            </a>
+                            <form method="PATCH" class="triggerPatchCard">
+                                <button>
+                                    <span class="icon is-small has-text-primary">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
+                                </button>
+
+                            </form>
+                            <form method="DELETE" class="triggerDeleteCard">
+                                <button>
+                                    <span class="icon is-small has-text-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </span>
+                                </button>
+
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -172,6 +194,9 @@
 
         </footer>
     </div>
+    <script type="text/javascript" src="js/label.js"></script>
+    <script type="text/javascript" src="js/list.js"></script>
+    <script type="text/javascript" src="js/card.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <!-- <script type="text/javascript" src="js/app.js"></script> -->
 </body>
