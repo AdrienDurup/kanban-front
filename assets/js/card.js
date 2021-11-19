@@ -39,6 +39,12 @@ const cardModule = {
         const cardId = card.id; //'card-' + Date.now();
         newCard.querySelector('.column').dataset.cardId = cardId;
 
+        newCard.querySelector('.edit-button').addEventListener('click', cardModule.toggleEditForm);
+
+        newCard.querySelector('.card-form-name input[name="content"]').addEventListener('blur', cardModule.toggleEditForm);
+
+        newCard.querySelector('.card-form-name').addEventListener('submit', cardModule.handleEditCardForm);
+
 
         // On récupère l'element au complet cf. Replay -> DocumentFragment vs Element DOM
         let box = newCard.querySelector('.box');
@@ -84,5 +90,47 @@ const cardModule = {
         const data = await res.json();
 
         cardModule.makeCardInDOM(data);
+    },
+    toggleEditForm: (e) => {
+
+        // On récupère notre liste à partir du titre
+        const elCard = e.target.closest('.box');
+        // De cacher/afficher le titre
+        elCard.querySelector(".card-name").classList.toggle('is-hidden');
+        // De cacher/afficher le formulaire
+        elCard.querySelector(".card-form-name").classList.toggle('is-hidden');
+
+        elCard.querySelector('.card-form-name input[name="content"]').focus();
+
+    },
+    handleEditCardForm: async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        const header = {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(app.formDataToObject(formData))
+        }
+
+        try {
+
+            const res = await fetch(app.base_url + '/cards/' + formData.get('card-id'), header);
+            const data = await res.json();
+
+            // On récupère la liste du DOM
+            const elCard = e.target.closest('.box');
+
+            // On mets à jour le nom
+            elCard.querySelector(".card-name").textContent = data.content;
+        } catch (err) {
+            console.error(err);
+        }
+
+        cardModule.toggleEditForm(e);
     },
 };

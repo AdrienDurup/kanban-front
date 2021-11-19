@@ -95,7 +95,7 @@
                             <input type="hidden" name="list-id" value="1">
                             <div class="field has-addons">
                                 <div class="control">
-                                    <input type="text" class="input is-small" name="list-name" value=""
+                                    <input type="text" class="input is-small" name="name" value=""
                                         placeholder="Nom de la liste">
                                 </div>
                                 <div class="control">
@@ -126,13 +126,25 @@
                 <div class="card-name column">
                     Réviser le front
                 </div>
+                <form action="" method="POST" class="card-form-name is-hidden">
+                    <input type="hidden" name="card-id" value="1">
+                    <div class="field has-addons">
+                        <div class="control">
+                            <input type="text" class="input is-small" name="content" value=""
+                                placeholder="Contenu de la carte">
+                        </div>
+                        <div class="control">
+                            <button class="button is-small is-success">Valider</button>
+                        </div>
+                    </div>
+                </form>
                 <div class="column is-narrow">
-                    <a href="#">
+                    <a class="edit-button" href="#">
                         <span class="icon is-small has-text-primary">
                             <i class="fas fa-pencil-alt"></i>
                         </span>
                     </a>
-                    <a href="#">
+                    <a class="delete-button" href="#">
                         <span class="icon is-small has-text-danger">
                             <i class="fas fa-trash-alt"></i>
                         </span>

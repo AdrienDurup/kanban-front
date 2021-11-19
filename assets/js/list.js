@@ -27,7 +27,6 @@ const listModule = {
 
         /* FIN DU CLONAGE */
 
-
         /* ON METS A JOUR LE HTML */
         // Je mets à jour le titre
         newList.querySelector('h2').textContent = list.name;
@@ -50,8 +49,9 @@ const listModule = {
         newList.querySelector('.list-name').addEventListener('dblclick', listModule.toggleEditForm);
 
         // Je gère le double click sur titre et j'appelle toggleEditForm
-        newList.querySelector('.list-form-name input[name="list-name"]').addEventListener('blur', listModule.toggleEditForm);
+        newList.querySelector('.list-form-name input[name="name"]').addEventListener('blur', listModule.toggleEditForm);
 
+        newList.querySelector('.list-form-name').addEventListener('submit', listModule.handleEditListForm);
         // Je récupère le holder des cartes
         const listHolder = document.querySelector('.card-lists');
         // Je récupère toutes les colonnes
@@ -80,7 +80,7 @@ const listModule = {
         // De cacher/afficher le formulaire
         elList.querySelector(".list-form-name").classList.toggle('is-hidden');
 
-        elList.querySelector('.list-form-name input[name="list-name"]').focus();
+        elList.querySelector('.list-form-name input[name="name"]').focus();
 
     },
     handleAddListForm: async (e) => {
@@ -105,7 +105,34 @@ const listModule = {
         listModule.makeListInDOM(data);
 
     },
-    handleEditListForm: async () => {
+    handleEditListForm: async (e) => {
+        e.preventDefault();
 
+        const formData = new FormData(e.target);
+
+        const header = {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(app.formDataToObject(formData))
+        }
+
+        try {
+
+            const res = await fetch(app.base_url + '/lists/' + formData.get('list-id'), header);
+            const data = await res.json();
+
+            // On récupère la liste du DOM
+            const elList = e.target.closest('.panel');
+
+            // On mets à jour le nom
+            elList.querySelector(".list-name").textContent = data.name;
+        } catch (err) {
+            console.error(err);
+        }
+
+        listModule.toggleEditForm(e);
     },
 };
