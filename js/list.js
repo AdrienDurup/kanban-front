@@ -54,12 +54,14 @@ const listModule = {
         });
 
         title.addEventListener("dblclick", (e) => {
+            const input=modify.querySelector(".modifyListInput");
+            input.value=e.target.textContent;
             app.swapElements([e.target,trashcan],modify);
         });
 
 
 
-        const container = document.getElementById("listsWrapper");
+        // const container = document.getElementById("listsWrapper");
         document.getElementById("addListButton").before(clone);
         // container;
         // container.appendChild(clone);

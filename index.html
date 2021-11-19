@@ -1,35 +1,43 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>oKanBan</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>oKanban</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script defer src="https://kit.fontawesome.com/06c14c0baa.js" crossorigin="anonymous"></script>
-    <!-- <script defer src="https://use.@fontawesome.com/releases/v5.3.1/js/all.js"></script> -->
+    <link rel="stylesheet" href="./css/style.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
     <!-- <script type="text/javascript" src="test.js"></script> -->
-    <div class="page_container">
-        <header class="header">
-            <h1 class="page_title">
-                oKanBan
+    <section class="section ">
+        <div class="container">
+            <h1 class="title ">
+                oKanban
             </h1>
-        </header>
-        <main class="contentWrapper" id="contentWrapper">
-            <form method="POST" action="http://localhost:1664/rest/label">
-                <input type="text" name="name" placeholder="tag name">
-                <button>nouveau label</button>
-            </form>
-
             <div class="columns">
-
                 <div class="column is-full">
                     <div class="card-lists columns" id="listsWrapper">
+
+                            <!-- NEW LIST button -->
+                            <button class="column is-one-quarter button is-success" id="addListButton">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                &nbsp; Ajouter une liste
+                            </button>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+            
 
                         <!-- LIST template -->
                         <template id="listTemplate">
@@ -81,22 +89,14 @@
                             </div>
                         </template>
 
-                        <!-- NEW LIST button -->
-                        <button class="column is-one-quarter button is-success" id="addListButton">
-                            <span class="icon is-small">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            &nbsp; Ajouter une liste
-                        </button>
-
-                    </div>
-                </div>
-            </div>
 
 
             <!-- CARD template -->
             <template id="cardTemplate">
                 <div class="box sharedIdForCard" data-card-id="J">
+                    <div class="tags labelContainer">
+
+                    </div>
                     <div class="columns">
                         <div class="column cardContent">
 
@@ -105,40 +105,49 @@
                         <form action="" method="POST" class="is-hidden modifyCard">
                             <div class="field has-addons">
                                 <div class="control">
-                                    <input type="textarea" class="input is-small modifyCardInput"
-                                        name="content" value="" placeholder="Votre texte">
+                                    <textarea rows="3" class="textarea is-small modifyCardInput" name="content"
+                                         placeholder="Votre texte"></textarea>
                                 </div>
                                 <div class="control">
-                                    <button
-                                        class="button is-small is-success modifyCardInput">Valider</button>
+                                    <button class="button is-small is-success modifyCardInput">Valider</button>
                                 </div>
                             </div>
                         </form>
 
 
                         <div class="column is-narrow">
+
                             <form method="PATCH" class="triggerPatchCard">
-                                <button>
+                                <button class="ad_button-reset">
                                     <span class="icon is-small has-text-primary">
                                         <i class="fas fa-pencil-alt"></i>
                                     </span>
                                 </button>
-
                             </form>
+
                             <form method="DELETE" class="triggerDeleteCard">
-                                <button>
+                                <button class="ad_button-reset">
                                     <span class="icon is-small has-text-danger">
                                         <i class="fas fa-trash-alt"></i>
                                     </span>
                                 </button>
-
                             </form>
+
                         </div>
                     </div>
                 </div>
             </template>
 
+            <!-- Label template -->
+            <template id="labelTemplate">
+                <!-- <form action="" class="labelMain"> -->
+                <span class="tag labelContent" data-label-id="TI" data-label-color="TC">
+                    <button class="delete is-small deleteLabel"></button>
+                </span>
+            <!-- </form> -->
+            </template>
 
+            <!-- MODALS -->
             <div class="modal" id="addListModal">
                 <div class="modal-background"></div>
                 <div class="modal-card">
@@ -189,11 +198,11 @@
                 </div>
             </div>
 
-        </main>
+
         <footer>
 
         </footer>
-    </div>
+
     <script type="text/javascript" src="js/label.js"></script>
     <script type="text/javascript" src="js/list.js"></script>
     <script type="text/javascript" src="js/card.js"></script>

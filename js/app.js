@@ -60,6 +60,10 @@ const app = {
         const modals = document.querySelectorAll(".modal.is-active");
         modals.forEach(el => { el.classList.remove("is-active") });
     },
+    deleteFromDOM:(type,id)=>{
+        const DOMlist = document.querySelector(`[data-${type}-id="${id}"]`);
+        DOMlist.parentElement.removeChild(DOMlist);
+    },
     addListeners: () => {
 
         /* gestion du click dans la fenetre */
@@ -132,9 +136,10 @@ const app = {
     },
 
     init: () => {
-        labelModule.setLabelForm();
+        // labelModule.setLabelForm();
         listModule.drawLists();
         app.addListeners();
+        cardModule.addListeners();
         listModule.addListeners();
     }
 };

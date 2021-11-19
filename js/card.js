@@ -15,14 +15,12 @@ const cardModule = {
         const triggerDeleteCard = clone.querySelector(".triggerDeleteCard");
         const patchCard = clone.querySelector(".modifyCard");
 
-        showHidePatchCardForm.addEventListener("submit", (e) => {
+         showHidePatchCardForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            // if(patchCard.classList.contains("is-hidden")){
-            // app.swapElements(patchCard, content);
-            // }else{
+            const textarea=patchCard.querySelector(".modifyCardInput");
+            /* textarea a une propriété value mais pas d’attribut value */
+            textarea.value=content.textContent;
             app.swapElements(content, patchCard);
-            // };
-
         });
         triggerDeleteCard.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -48,9 +46,13 @@ const cardModule = {
 
         });
 
-
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
+
+        /* on rajoute les labels quand la carte est déja dans le DOM */
+        card.labels.forEach(label => {
+            labelModule.makeLabelInDOM(label);
+        });
     },
     deleteCardFromDOM: (cardId) => {
         const DOMlist = document.querySelector(`[data-card-id="${cardId}"]`);
@@ -60,8 +62,9 @@ const cardModule = {
         const el = "Card";
 
         const modal = document.getElementById(`add${el}Modal`);
-        const form = modal.getElementsByTagName("form")[0];
 
+
+        /* gestion des boutons de fermeture */
         const closeButtons = modal.getElementsByClassName("close");
         // console.log("close", closeButtons);
         for (const button of closeButtons) {
@@ -70,26 +73,33 @@ const cardModule = {
             });
         };
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const dataToSend = app.formToJson(e.target);
+        try {
+            const form = modal.getElementsByTagName("form")[0];
+            form.addEventListener("submit", async (e) => {
+                console.log("modal submit");
+                e.preventDefault();
+                const dataToSend = app.formToJson(e.target);
 
-            /* On récupère la prochaine position de fin*/
-            const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
-            dataToSend.position = position;
-            console.log(position, dataToSend.position);
-            if (!dataToSend.position)
-                return;
+                /* On récupère la prochaine position de fin*/
+                const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
+                dataToSend.position = position;
+                console.log(position, dataToSend.position);
+                if (!dataToSend.position)
+                    return;
 
-            console.log(dataToSend);
-            let res = await fetch(`${restRoot}/${el.toLowerCase()}`, app.setRequest("POST", dataToSend));
-            res = await res.json();
+                console.log(dataToSend);
+                let res = await fetch(`${restRoot}/${el.toLowerCase()}`, app.setRequest("POST", dataToSend));
+                res = await res.json();
 
-            /* La partie qui change d’une modale à l’autre */
-            cardModule.makeCardInDOM(res);
+                /* La partie qui change d’une modale à l’autre */
+                cardModule.makeCardInDOM(res);
 
-            app.killModal();
-        });
+                app.killModal();
+            });
+        } catch (e) {
+            console.log(e);
+        };
+
     },
 };
 //export {cardModule};
