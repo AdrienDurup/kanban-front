@@ -3,11 +3,13 @@ const labelModule = {
         const template = document.getElementById("labelTemplate");
         const clone = document.importNode(template.content, true);
         const labelContent=clone.querySelector(".labelContent");
-        labelContent.textContent = label.name;
+        const deleteButton = clone.querySelector(".deleteLabel");
+        labelContent.prepend(label.name);
         labelContent.setAttribute("data-label-id", label.id);
         labelContent.setAttribute("data-label-color", label.color);
         const container = document.querySelector(`[data-card-id="${label.card_has_label.card_id}"]`);
-        const deleteButton = clone.querySelector(".deleteLabel");
+        // const deleteButton = clone.querySelector(".deleteLabel");
+        console.log(clone);
         console.log(deleteButton);
         deleteButton.addEventListener("click",()=>{app.deleteFromDOM("label",label.id)});
         container.append(clone);
