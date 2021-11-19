@@ -49,6 +49,9 @@ const listModule = {
         // Je gère le double click sur titre et j'appelle toggleEditForm
         newList.querySelector('.list-name').addEventListener('dblclick', listModule.toggleEditForm);
 
+        // Je gère le double click sur titre et j'appelle toggleEditForm
+        newList.querySelector('.list-form-name input[name="list-name"]').addEventListener('blur', listModule.toggleEditForm);
+
         // Je récupère le holder des cartes
         const listHolder = document.querySelector('.card-lists');
         // Je récupère toutes les colonnes
@@ -76,6 +79,8 @@ const listModule = {
         elList.querySelector(".list-name").classList.toggle('is-hidden');
         // De cacher/afficher le formulaire
         elList.querySelector(".list-form-name").classList.toggle('is-hidden');
+
+        elList.querySelector('.list-form-name input[name="list-name"]').focus();
 
     },
     handleAddListForm: async (e) => {
