@@ -17,14 +17,11 @@ const listModule = {
         const title = clone.querySelector(".listName");
         title.textContent = list.name;
 
-        const plus = clone.querySelector(".fa-plus");
-
+        const plus = clone.querySelector(".addCardToList");
         /* Gestion du bouton + pour ajouter une carte */
         plus.addEventListener("click", (e) => {
-            // console.log(e);
-            app.triggerModal("Card", { card_listId: list.id });
+           app.triggerModal("Card", { card_listId: list.id });
         });
-
 
         /* gestion du bouton poubelle pour supprimer une liste */
         const trashcan = clone.querySelector(".deleteList");
@@ -54,9 +51,9 @@ const listModule = {
         });
 
         title.addEventListener("dblclick", (e) => {
-            const input=modify.querySelector(".modifyListInput");
-            input.value=e.target.textContent;
-            app.swapElements([e.target,trashcan],modify);
+            const input = modify.querySelector(".modifyListInput");
+            input.value = e.target.textContent;
+            app.swapElements([e.target, trashcan], modify);
         });
 
 
@@ -82,6 +79,19 @@ const listModule = {
             app.triggerModal("List");
         });
 
+        /* gestion boutons pour ajouter une carte */
+        // const plus = document.querySelectorAll(".addCardToList");
+        // console.log(",éuèoéu,oéu",plus);
+        // plus.forEach((el) => {
+        //     console.log("element peopouepoé",el);
+        //     el.addEventListener("click", (e) => {
+        //         console.log("plus", e);
+        //         app.triggerModal("Card", { card_listId: list.id });
+        //     });
+        //     console.log(el.addEventListener);
+        // })
+
+
         const el = "List";
 
         const modal = document.getElementById(`add${el}Modal`);
@@ -100,7 +110,7 @@ const listModule = {
             const dataToSend = app.formToJson(e.target);
 
             /* On récupère la prochaine position de fin*/
-            const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
+            const position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
             dataToSend.position = position;
             console.log(position, dataToSend.position);
             if (!dataToSend.position)

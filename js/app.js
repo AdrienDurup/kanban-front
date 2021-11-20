@@ -5,11 +5,7 @@ const app = {
         DOMobject.classList.remove(`is-hidden`);
     },
     hideElement: (DOMobject) => {
-        //console.log(DOMobject.classList.contains(`is-hidden`));
-        console.log(DOMobject);
-        console.log(typeof DOMobject.classList);
         DOMobject.classList.add(`is-hidden`);
-        // console.log("after",DOMobject);
     },
     swapElements: (el1, el2) => {
         /* les nodeLists récupérés par querySelector ne sont pas des tableaux mais des objets itérables,
@@ -58,10 +54,11 @@ const app = {
     killModal: () => {
         /* kill toutes les modales */
         const modals = document.querySelectorAll(".modal.is-active");
-        modals.forEach(el => { el.classList.remove("is-active") });
+        console.log(modals);
+        modals.forEach((el) => { el.classList.remove("is-active") });
     },
     deleteFromDOM:(type,id)=>{
-        const DOMlist = document.querySelector(`[data-${type}-id="${id}"]`);
+        const DOMlist = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
         DOMlist.parentElement.removeChild(DOMlist);
     },
     addListeners: () => {
@@ -73,14 +70,12 @@ const app = {
                 const modifyListForms = document.querySelectorAll(".modifyList");
                 const listNames = document.querySelectorAll(".listName");
                 const trashcans = document.querySelectorAll(".deleteList");
-                console.log(listNames);
-                //console.log("DOCUMENT",modifyListForms,listNames,trashcans);
                 app.swapElements(modifyListForms, Array.from(listNames).concat(Array.from(trashcans)));
             };
             if (!e.target.classList.contains("modifyCardInput")) {
                 const modifyCardForms = document.querySelectorAll(".modifyCard");
                 const cardsContents = document.querySelectorAll(".cardContent");
-                console.log(modifyCardForms, cardsContents);
+                // console.log(modifyCardForms, cardsContents);
                 app.swapElements(modifyCardForms, cardsContents);
             };
         });
@@ -135,9 +130,9 @@ const app = {
 
     },
 
-    init: () => {
+    init: async () => {
         // labelModule.setLabelForm();
-        listModule.drawLists();
+        await listModule.drawLists();
         app.addListeners();
         cardModule.addListeners();
         listModule.addListeners();
