@@ -16,14 +16,8 @@ const cardModule = {
         const showHidePatchCardForm = clone.querySelector(".triggerPatchCard");
         const triggerDeleteCard = clone.querySelector(".triggerDeleteCard");
         const patchCard = clone.querySelector(".modifyCard");
+        showHidePatchCardForm.addEventListener("submit", cardModule.handleShowHidePatchForm);
 
-        showHidePatchCardForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const textarea = patchCard.querySelector(".modifyCardInput");
-            /* textarea a une propriété value mais pas d’attribut value */
-            textarea.value = content.textContent;
-            app.swapElements(content, patchCard);
-        });
         triggerDeleteCard.addEventListener("submit", (e) => {
             e.preventDefault();
             const route = `${restRoot}/card/${card.id}`;
@@ -31,20 +25,47 @@ const cardModule = {
             app.deleteFromDOM("card", card.id);
         });
 
-        patchCard.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e,card); });
+        patchCard.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
 
         /* on rajoute les labels quand la carte est déja dans le DOM */
-        if(card.labels){
-                    card.labels.forEach(label => {
-            labelModule.makeLabelInDOM(label);
-        });
+        if (card.labels) {
+            card.labels.forEach(label => {
+                labelModule.makeLabelInDOM(label);
+            });
         };
 
     },
-    handlePatchCard: async (e,card) => {
+    handleShowHidePatchForm: (e) => {
+        e.preventDefault();
+        const card = e.target.closest(".cardMain");//on récupère la carte
+        const editForm = card.querySelector(".modifyCard");//son formulaire d’édition
+        const content = card.querySelector(".cardContent");//le container du texte
+        // const showFormButton = card.querySelector(".editButton");//le container du texte
+        const textarea = editForm.querySelector(".modifyCardInput");
+        /* textarea a une propriété value mais pas d’attribut value */
+        textarea.value = content.textContent;
+
+        /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
+        les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */
+        console.log(editForm.classList.contains("is-hidden"));
+        // if(editForm.classList.contains("is-hidden")){
+                    app.swapElements(content, editForm);
+        //    }else{
+        //     app.swapElements( editForm,content);
+        // };
+
+    },
+    // handleShowHidePatchForm:(e) => {
+    //     e.preventDefault();
+    //     const textarea = patchCard.querySelector(".modifyCardInput");
+    //     /* textarea a une propriété value mais pas d’attribut value */
+    //     textarea.value = content.textContent;
+    //     app.swapElements(content, patchCard);
+    // } ,
+    handlePatchCard: async (e, card) => {
         e.preventDefault();
         try {
             console.log("patching");

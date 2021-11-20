@@ -2,7 +2,9 @@ const restRoot = "http://localhost:1664/rest";
 
 const app = {
     showElement: (DOMobject) => {
+        // console.log("showElement",DOMobject.classList.contains(`is-hidden`));
         DOMobject.classList.remove(`is-hidden`);
+        // console.log("showElement",DOMobject.classList.contains(`is-hidden`));
     },
     hideElement: (DOMobject) => {
         DOMobject.classList.add(`is-hidden`);
@@ -72,7 +74,26 @@ const app = {
                 const trashcans = document.querySelectorAll(".deleteList");
                 app.swapElements(modifyListForms, Array.from(listNames).concat(Array.from(trashcans)));
             };
-            if (!e.target.classList.contains("modifyCardInput")) {
+// const testForm(target){
+// if(target){
+// return 
+// };
+// return target
+// };
+      if (e.target.closest("form")?
+      e.target.closest("form").classList.contains("triggerPatchCard")
+      :false){
+        const modifyCardForms = document.querySelectorAll(".modifyCard");
+        const cardsContents = document.querySelectorAll(".cardContent");
+        // console.log(modifyCardForms, cardsContents);
+        app.swapElements(modifyCardForms, cardsContents);
+      };
+            if (!e.target.classList.contains("modifyCardInput")
+            //  ||
+            //  e.target.closest("form")?
+            // e.target.closest("form").classList.contains("triggerPatchCard")
+            // :false//On ne gère pas le clic sur le bouton d’ouverture de editForm, le cardModule le fera
+            ) {
                 const modifyCardForms = document.querySelectorAll(".modifyCard");
                 const cardsContents = document.querySelectorAll(".cardContent");
                 // console.log(modifyCardForms, cardsContents);
