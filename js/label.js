@@ -2,7 +2,7 @@ const labelModule = {
     makeLabelInDOM: (label) => {
         const template = document.getElementById("labelTemplate");
         const clone = document.importNode(template.content, true);
-        const labelContent=clone.querySelector(".labelContent");
+        const labelContent = clone.querySelector(".labelContent");
         const deleteButton = clone.querySelector(".deleteLabel");
         labelContent.prepend(label.name);
         labelContent.setAttribute("data-label-id", label.id);
@@ -11,8 +11,20 @@ const labelModule = {
         // const deleteButton = clone.querySelector(".deleteLabel");
         console.log(clone);
         console.log(deleteButton);
-        deleteButton.addEventListener("click",()=>{app.deleteFromDOM("label",label.id)});
+        deleteButton.addEventListener("click", () => { app.deleteFromDOM("label", label.id) });
         container.append(clone);
+    },
+    handleCreateLabel: (e) => {
+console.log("handleCreateLabel");
+    },
+    handleLabelModal: (e) => {
+        console.log("handleLabelModal");
+        
+            },
+    addListeners: () => {
+        const labelDictionary=document.getElementById("labelDictionary");
+        labelDictionary.addEventListener("click",labelModule.handleLabelModal);
+      
     },
     setLabelForm: () => {
         const wrapper = document.getElementById("contentWrapper");

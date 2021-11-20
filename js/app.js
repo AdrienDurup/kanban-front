@@ -2,9 +2,12 @@ const restRoot = "http://localhost:1664/rest";
 
 const app = {
     showElement: (DOMobject) => {
-        // console.log("showElement",DOMobject.classList.contains(`is-hidden`));
+
+        // console.log("showElement", DOMobject);
+        // console.log("showElement", DOMobject.classList.contains(`is-hidden`));
         DOMobject.classList.remove(`is-hidden`);
-        // console.log("showElement",DOMobject.classList.contains(`is-hidden`));
+        //
+        // console.log("showElement", DOMobject.classList.contains(`is-hidden`));
     },
     hideElement: (DOMobject) => {
         DOMobject.classList.add(`is-hidden`);
@@ -12,14 +15,19 @@ const app = {
     swapElements: (el1, el2) => {
         /* les nodeLists récupérés par querySelector ne sont pas des tableaux mais des objets itérables,
         on doit pouvoir traiter les deux, ainsi que les Elements du DOM */
+        // console.log("SWAP");
         if (!(el1 instanceof Array) && !(el1 instanceof NodeList)) {
+            // console.log("SWAP ONE", el1);
             app.hideElement(el1);
         } else {
+            // console.log("SWAP ALL", el1);
             el1.forEach((el) => { app.hideElement(el); });
         };
-        if (!(el2 instanceof Array) && !(el1 instanceof NodeList)) {
+        if (!(el2 instanceof Array) && !(el2 instanceof NodeList)) {
+            // console.log("SWAP SHOW ONE", el2);
             app.showElement(el2);
         } else {
+            // console.log("SWAP ALL", el2);
             el2.forEach((el) => { app.showElement(el); });
         };
     },
@@ -59,7 +67,7 @@ const app = {
         console.log(modals);
         modals.forEach((el) => { el.classList.remove("is-active") });
     },
-    deleteFromDOM:(type,id)=>{
+    deleteFromDOM: (type, id) => {
         const DOMlist = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
         DOMlist.parentElement.removeChild(DOMlist);
     },
@@ -74,81 +82,41 @@ const app = {
                 const trashcans = document.querySelectorAll(".deleteList");
                 app.swapElements(modifyListForms, Array.from(listNames).concat(Array.from(trashcans)));
             };
-// const testForm(target){
-// if(target){
-// return 
-// };
-// return target
-// };
-      if (e.target.closest("form")?
-      e.target.closest("form").classList.contains("triggerPatchCard")
-      :false){
-        const modifyCardForms = document.querySelectorAll(".modifyCard");
-        const cardsContents = document.querySelectorAll(".cardContent");
-        // console.log(modifyCardForms, cardsContents);
-        app.swapElements(modifyCardForms, cardsContents);
-      };
-            if (!e.target.classList.contains("modifyCardInput")
-            //  ||
-            //  e.target.closest("form")?
-            // e.target.closest("form").classList.contains("triggerPatchCard")
-            // :false//On ne gère pas le clic sur le bouton d’ouverture de editForm, le cardModule le fera
-            ) {
-                const modifyCardForms = document.querySelectorAll(".modifyCard");
+
+            /* On vérifie si le bouton cliqué est le crayon d’édition de carte.
+            la sélection se fait avec closest à cause d’issues dues au SVG */
+            const testEditCardButton = e.target.closest("form") ?
+                e.target.closest("form").classList.contains("triggerPatchCard")
+                : false;
+
+            /* on vérifie que target n’est pas un élément du card edit form 
+            pour tous les fermer */
+            if (!e.target.classList.contains("modifyCardInput")) {
+                let modifyCardForms = document.querySelectorAll(".modifyCard");
                 const cardsContents = document.querySelectorAll(".cardContent");
+
+                /* si le bouton cliqué est le crayon, on le retire de la liste des éléments à effacer
+                le édit form courant, car son effacement est gérer par un autre évènement (celui du bouton crayon cliqué).
+                Toute cette opération afin d’éviter des téléscopages d’events.
+                Du coup les edit forms se ferment quand : on clique en dehors OU sur le bouton crayon (lui meme en dehors) */
+                if (testEditCardButton) {
+
+                    /* on passe de NodeList à Array pour avoir filter */
+                    modifyCardForms = Array.from(modifyCardForms);
+                    // console.log(modifyCardForms);
+                    modifyCardForms = modifyCardForms
+                        .filter(el => {
+                            /* on garde dans le tableau des éléments à effacer que ceux qui
+                             ne sont pas dans la meme carte que le bouton cliqué */
+                            return e.target.closest(".cardMain") !== el.closest(".cardMain");
+                        });
+                };
+                // console.log("longueur", modifyCardForms);
+
                 // console.log(modifyCardForms, cardsContents);
                 app.swapElements(modifyCardForms, cardsContents);
             };
         });
-
-
-
-
-        // for (const el of ["List", "Card"]) {
-
-        //     const modal = document.getElementById(`add${el}Modal`);
-        //     const form = modal.getElementsByTagName("form")[0];
-
-        //     const closeButtons = modal.getElementsByClassName("close");
-        //     // console.log("close", closeButtons);
-        //     for (const button of closeButtons) {
-        //         button.addEventListener("click", (e) => {
-        //             app.killModal();
-        //         });
-        //     };
-
-        //     console.log(modal);
-        //     form.addEventListener("submit", async (e) => {
-        //         e.preventDefault();
-        //         const dataToSend = app.formToJson(e.target);
-        //         /* On récupère la prochaine position de fin*/
-        //         const position = document.querySelectorAll(`.sharedIdFor${el}`).length;
-        //         dataToSend.position = position;
-        //         console.log(position, dataToSend.position);
-        //         if (!dataToSend.position)
-        //             return;
-
-        //         console.log(dataToSend);
-        //         let res = await fetch(`${restRoot}/${el.toLowerCase()}`, {
-        //             headers: { "Content-Type": "application/json; charset=utf-8" },
-        //             method: 'POST',
-        //             body: JSON.stringify(dataToSend)
-        //         });
-        //         res = await res.json();
-        //         switch (el) {
-        //             case "List":
-        //                 app[`make${el}InDOM`](res);
-        //                 break;
-        //             case "Card":
-        //                 app[`make${el}InDOM`](res);
-        //                 /* todo */
-        //                 break;
-        //         };
-        //         app.killModal();
-        //     });
-        // };
-
-
     },
 
     init: async () => {
@@ -157,6 +125,7 @@ const app = {
         app.addListeners();
         cardModule.addListeners();
         listModule.addListeners();
+        labelModule.addListeners();
     }
 };
 

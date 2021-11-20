@@ -51,11 +51,11 @@ const cardModule = {
         /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
         les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */
         console.log(editForm.classList.contains("is-hidden"));
-        // if(editForm.classList.contains("is-hidden")){
+        if(editForm.classList.contains("is-hidden")){
                     app.swapElements(content, editForm);
-        //    }else{
-        //     app.swapElements( editForm,content);
-        // };
+            }else{
+            app.swapElements( editForm,content);
+        };
 
     },
     // handleShowHidePatchForm:(e) => {
@@ -67,10 +67,14 @@ const cardModule = {
     // } ,
     handlePatchCard: async (e, card) => {
         e.preventDefault();
+        let patchCard;
+        let content;
         try {
             console.log("patching");
             const dataToSend = app.formToJson(e.target);
             const route = `${restRoot}/card/${card.id}`;
+            content=e.target.closest(".cardMain").querySelector(".cardContent");
+            patchCard=e.target.closest(".cardMain").querySelector(".modifyCard");
             console.log(dataToSend);
             await fetch(route, app.setRequest("PATCH", dataToSend));
             content.textContent = dataToSend.content;
@@ -80,10 +84,6 @@ const cardModule = {
             app.swapElements(patchCard, content);
         };
 
-    },
-    deleteCardFromDOM: (cardId) => {
-        const DOMlist = document.querySelector(`[data-card-id="${cardId}"]`);
-        DOMlist.parentElement.removeChild(DOMlist);
     },
     addListeners: () => {
         const el = "Card";
@@ -109,17 +109,22 @@ const cardModule = {
                 const dataToSend = app.formToJson(e.target);
 
                 /* On récupère la prochaine position de fin*/
-                const position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
+                let position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
+                if(!position)
+                position=0; 
+
                 dataToSend.position = position;
+
                 console.log(position, dataToSend.position);
-                if (!dataToSend.position)
-                    return;
+                // if (!dataToSend.position)
+                //     return;
 
                 console.log(dataToSend);
                 let res = await fetch(`${restRoot}/${el.toLowerCase()}`, app.setRequest("POST", dataToSend));
                 res = await res.json();
                 console.log(res);
                 /* La partie qui change d’une modale à l’autre */
+                if(res)
                 cardModule.makeCardInDOM(res);
 
                 app.killModal();
