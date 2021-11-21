@@ -71,9 +71,9 @@ const labelModule = {
                 /* Dans une card */
             } else if (e.target.closest(".labelContainer")) {
                 console.log("delete assoc");
-                const cardId = e.target.closest("cardMain").getAttribute("data-card-id");
+                const cardId = e.target.closest(".cardMain").getAttribute("data-card-id");
                 const labelId = e.target.parentElement.getAttribute("data-label-id");
-                listModule.deleteAssociation(cardId, labelId);
+                labelModule.deleteAssociation(cardId, labelId);
             };
         } catch (e) {
             console.error(e);
@@ -109,10 +109,10 @@ const labelModule = {
             let res = await fetch(`${restRoot}/card/${cardId}/label/${labelId}`, app.setRequest("DELETE"));
             res = await res.json();
 
-            if (res)
-                labelModule.deleteEverywhere(labelId);
+            // if (res)
+            //     labelModule.deleteEverywhere(labelId);
 
-            app.deleteFromDOM("label", id);
+            app.deleteFromDOM("label", labelId);
         } catch (e) {
             console.error(e);
         };
