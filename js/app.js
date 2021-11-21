@@ -80,7 +80,15 @@ const app = {
                 const modifyListForms = document.querySelectorAll(".modifyList");
                 const listNames = document.querySelectorAll(".listName");
                 const trashcans = document.querySelectorAll(".deleteList");
+                /* pour concaténer on transforme les NodeList en Array */
                 app.swapElements(modifyListForms, Array.from(listNames).concat(Array.from(trashcans)));
+            };
+
+            /* si on clique en dehors d’un form de modification de LABEL, on les ferme tous */
+            if (!e.target.closest(".editLabel")) {
+                const modifyListForms = document.querySelectorAll(".editLabel");
+                const labelNames = document.querySelectorAll(".labelName");
+                app.swapElements(modifyListForms,labelNames);
             };
 
             /* On vérifie si le bouton cliqué est le crayon d’édition de carte.
@@ -92,7 +100,7 @@ const app = {
             /* on vérifie que target n’est pas un élément du card edit form 
             pour tous les fermer */
             // if (!e.target.classList.contains("modifyCardInput")) {
-                if (!e.target.closest(".modifyCard")) {
+            if (!e.target.closest(".modifyCard")) {
                 let modifyCardForms = document.querySelectorAll(".modifyCard");
                 const cardsContents = document.querySelectorAll(".cardContent");
 

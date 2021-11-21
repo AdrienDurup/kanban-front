@@ -93,9 +93,11 @@ const labelModule = {
             let res2 = await fetch(`${restRoot}/label/${labelId}`);
             labelObj = await res2.json();
             // console.log(res);
+            // console.log("container",document.querySelector(`[data-card-id="${cardId}"]`));
             if (res)
-                var container = document.querySelector(`[data-card-id=${cardId}]`);
+                var container = document.querySelector(`[data-card-id="${cardId}"]`);
 
+                // console.log("container",container);
             labelModule.makeLabelInDOM(labelObj, container);
 
         } catch (e) {

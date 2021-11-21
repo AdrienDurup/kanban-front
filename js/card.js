@@ -34,7 +34,7 @@ const cardModule = {
         /* on rajoute les labels quand la carte est déja dans le DOM */
         if (card.labels) {
             card.labels.forEach(label => {
-                labelModule.makeLabelInDOM(label);
+                labelModule.makeLabelInDOM(label,main.querySelector(".labelContainer"));
             });
         };
 
@@ -51,16 +51,16 @@ const cardModule = {
         textarea.value = content.textContent;
 
         /* on fournit la couleur au champ */
-        const color=card.querySelector(".modifyColorInput");
-        color.value=card.style.getPropertyValue("background-color");
+        const color = card.querySelector(".modifyColorInput");
+        color.value = card.style.getPropertyValue("background-color");
 
         /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
         les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */
         console.log(editForm.classList.contains("is-hidden"));
-        if(editForm.classList.contains("is-hidden")){
-                    app.swapElements(content, editForm);
-            }else{
-            app.swapElements( editForm,content);
+        if (editForm.classList.contains("is-hidden")) {
+            app.swapElements(content, editForm);
+        } else {
+            app.swapElements(editForm, content);
         };
 
     },
@@ -71,12 +71,35 @@ const cardModule = {
         try {
             console.log("patching");
             const dataToSend = app.formToJson(e.target);
+            /* on récupère la string des labels */
+            let labelNames = dataToSend.labels;
+
+            /* update une carte */
+            delete dataToSend.labels;//on supprime avant d’envoyer en base
             const route = `${restRoot}/card/${card.id}`;
-            content=e.target.closest(".cardMain").querySelector(".cardContent");
-            patchCard=e.target.closest(".cardMain").querySelector(".modifyCard");
+            cardDOM = e.target.closest(".cardMain");
+            content = cardDOM.querySelector(".cardContent");
+            patchCard = e.target.closest(".cardMain").querySelector(".modifyCard");
             console.log(dataToSend);
             await fetch(route, app.setRequest("PATCH", dataToSend));
             content.textContent = dataToSend.content;
+            cardDOM.style.setProperty("background-color", dataToSend.color);
+
+            /* créer des associations de labels */
+            labelNames = labelNames.split(";");//tableau des labels
+            let labelInDictionary = document.getElementById("labelDictionary").querySelectorAll(".labelMain");//nodeList des labels en haut de page
+            //On en fait un tableau
+            labelInDictionary = Array.from(labelInDictionary);
+            /* Pour chaque nom de label envoyé dans le champ, on cherche le label correspondant et on l’associe. */
+            labelNames.forEach(labelName => {
+                /* On récupère le label qui porte le nom qu’on cherche à associer */
+                const label = labelInDictionary.find(elInDict => {
+                    const labelNameFromDict = elInDict.querySelector(".labelName").textContent;
+                    return labelNameFromDict === labelName;
+                });
+                const labelId = label.getAttribute(`data-label-id`);
+                labelModule.createAssociation(card.id, labelId);
+            });
         } catch (e) {
             console.error(e);
         } finally {
@@ -109,8 +132,8 @@ const cardModule = {
 
                 /* On récupère la prochaine position de fin*/
                 let position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
-                if(!position)
-                position=0; 
+                if (!position)
+                    position = 0;
 
                 dataToSend.position = position;
 
@@ -123,8 +146,8 @@ const cardModule = {
                 res = await res.json();
                 console.log(res);
                 /* La partie qui change d’une modale à l’autre */
-                if(res)
-                cardModule.makeCardInDOM(res);
+                if (res)
+                    cardModule.makeCardInDOM(res);
 
                 app.killModal();
             } catch (e) {
