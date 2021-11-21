@@ -27,3 +27,26 @@ input{
         border-radius: 4px;
         padding: .2rem;
     }
+    .ad-label-input{
+        display: inline;
+padding: unset; 
+width:6rem;
+   }
+   .ad-label-button{
+       box-shadow: none;
+    padding: 0 2px;  
+    border: none;
+    color: white;
+    background-color: rgba(10,10,10,.2);
+   }
+   .ad-label-button:hover{
+ color: white;
+}
+.ad-label-button:hover{
+    color: white;
+    background-color: rgba(10,10,10,.3);
+   }
+   .ad-label-button:active{
+    color: white;
+    background-color: rgba(10,10,10,.4);
+   }

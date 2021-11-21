@@ -48,8 +48,20 @@
     <!-- Label template -->
     <template id="labelTemplate">
         <!-- <form action="" class="labelMain"> -->
-        <span class="tag labelContent" data-label-id="TI" data-label-color="TC">
+        <span class="tag labelMain" data-label-id="TI" data-label-color="TC">
+            <div class="labelName"></div>
+            <form  class="is-hidden editLabel">
+                <input type="text" name="name" class="ad-label-input nameInput" placeholder="nom">
+                <input type="text" name="color" class="ad-label-input colorInput" placeholder="couleur">
+                <!-- Pour activer la touche entrée on peut passer le bouton en invisible avec la class is-hidden,
+                il sera toujours actif en tant que submitter -->
+                <button class="ad-label-button">ok</button>
+            </form>
             <button class="delete is-small deleteLabel"></button>
+        </span>
+        <span>
+
+            
         </span>
         <!-- </form> -->
     </template>
@@ -170,18 +182,18 @@
                     <div class="field">
                         <label class="label">Nom</label>
                         <div class="control">
-                            <input type="text" class="input" name="name" value="" placeholder="Nom de la liste">
+                            <input type="text" class="input" name="name" value="" placeholder="Nom du label">
                         </div>
                     </div>
                     <div class="field">
                         <label class="label">Couleur</label>
                         <div class="control">
-                            <input type="text" class="input" name="name" value="" placeholder="Nom de la liste">
+                            <input type="text" class="input" name="color" value="#F0F" placeholder="couleur du label">
                         </div>
                     </div>
                 </section>
                 <footer class="modal-card-foot">
-                    <button class="button is-success" id="saveListsChanges">Enregistrer</button>
+                    <button class="button is-success" id="saveLabelsChanges">Enregistrer</button>
                     <button class="button close" type="button">Annuler</button>
                 </footer>
             </form>

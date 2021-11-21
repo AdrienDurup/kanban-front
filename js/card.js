@@ -58,13 +58,6 @@ const cardModule = {
         };
 
     },
-    // handleShowHidePatchForm:(e) => {
-    //     e.preventDefault();
-    //     const textarea = patchCard.querySelector(".modifyCardInput");
-    //     /* textarea a une propriété value mais pas d’attribut value */
-    //     textarea.value = content.textContent;
-    //     app.swapElements(content, patchCard);
-    // } ,
     handlePatchCard: async (e, card) => {
         e.preventDefault();
         let patchCard;

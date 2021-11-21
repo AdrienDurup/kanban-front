@@ -68,8 +68,8 @@ const app = {
         modals.forEach((el) => { el.classList.remove("is-active") });
     },
     deleteFromDOM: (type, id) => {
-        const DOMlist = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
-        DOMlist.parentElement.removeChild(DOMlist);
+        const DOMelement = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
+        DOMelement.parentElement.removeChild(DOMelement);
     },
     addListeners: () => {
 
@@ -122,6 +122,7 @@ const app = {
     init: async () => {
         // labelModule.setLabelForm();
         await listModule.drawLists();
+        await labelModule.drawLabelsInDictionnary();
         app.addListeners();
         cardModule.addListeners();
         listModule.addListeners();
