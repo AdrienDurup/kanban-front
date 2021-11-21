@@ -26,10 +26,10 @@ const labelModule = {
         console.log(e.target.closest("#labelDictionary"));
         if (e.target.closest("#labelDictionary")) {
             console.log("try to edit");
-            const label=e.target.parentElement;
+            const label = e.target.parentElement;
             const form = label.querySelector(".editLabel");
             form.querySelector(".nameInput").value = e.target.textContent;
-            form.querySelector(".colorInput").value=label.style.getPropertyValue("background-color");
+            form.querySelector(".colorInput").value = label.style.getPropertyValue("background-color");
             app.swapElements(e.target, form);
         };
 
@@ -38,14 +38,14 @@ const labelModule = {
         e.preventDefault();
         try {
             const data = app.formToJson(e.target);
-            const labelId=e.target.closest(".labelMain").getAttribute("data-label-id");
+            const labelId = e.target.closest(".labelMain").getAttribute("data-label-id");
             let res = await fetch(`${restRoot}/label/${labelId}`, app.setRequest("PATCH", data));
             res = await res.json();
             console.log(res);
-            if (res[0]===1) {
+            if (res[0] === 1) {
                 const labelName = e.target.parentElement.querySelector(".labelName");
                 labelName.textContent = data.name;
-                labelName.parentElement.style.setProperty("background-color",data.color);
+                labelName.parentElement.style.setProperty("background-color", data.color);
                 labelName.textContent = data.name;
                 app.swapElements(e.target, labelName);
             };
@@ -94,11 +94,11 @@ const labelModule = {
             labelObj = await res2.json();
             // console.log(res);
             // console.log("container",document.querySelector(`[data-card-id="${cardId}"]`));
-            if (res)
-                var container = document.querySelector(`[data-card-id="${cardId}"]`);
-
-                // console.log("container",container);
-            labelModule.makeLabelInDOM(labelObj, container);
+            if (res){
+                     const card = document.querySelector(`[data-card-id="${cardId}"]`);
+                     const labelContainer=card.querySelector(".labelContainer");
+                       labelModule.makeLabelInDOM(labelObj, labelContainer);
+            };
 
         } catch (e) {
             console.error(e);
@@ -109,13 +109,17 @@ const labelModule = {
             let res = await fetch(`${restRoot}/card/${cardId}/label/${labelId}`, app.setRequest("DELETE"));
             res = await res.json();
 
-            // if (res)
-            //     labelModule.deleteEverywhere(labelId);
-
-            app.deleteFromDOM("label", labelId);
+            if (res)
+                labelModule.deleteLabelFromCardDOM(cardId, labelId);
+ 
         } catch (e) {
             console.error(e);
         };
+    },
+    deleteLabelFromCardDOM: (cardId, labelId) => {
+        const card = document.querySelector(`[data-card-id="${cardId}"]`);
+        const label=card.querySelector(`[data-label-id="${labelId}"]`);
+        label.parentElement.removeChild(label);
     },
     drawLabelsInDictionnary: async () => {
         try {
