@@ -3,6 +3,7 @@ const cardModule = {
         const template = document.getElementById("cardTemplate");
         const clone = document.importNode(template.content, true);
         const main = clone.querySelector(".cardMain");
+        console.log(card.color);
         main.style.setProperty("background-color", card.color);
         const content = clone.querySelector(".cardContent");
         console.log(content);
@@ -44,9 +45,14 @@ const cardModule = {
         const editForm = card.querySelector(".modifyCard");//son formulaire d’édition
         const content = card.querySelector(".cardContent");//le container du texte
         // const showFormButton = card.querySelector(".editButton");//le container du texte
+
         const textarea = editForm.querySelector(".modifyCardInput");
         /* textarea a une propriété value mais pas d’attribut value */
         textarea.value = content.textContent;
+
+        /* on fournit la couleur au champ */
+        const color=card.querySelector(".modifyColorInput");
+        color.value=card.style.getPropertyValue("background-color");
 
         /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
         les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */

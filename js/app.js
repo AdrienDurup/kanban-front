@@ -91,7 +91,8 @@ const app = {
 
             /* on vérifie que target n’est pas un élément du card edit form 
             pour tous les fermer */
-            if (!e.target.classList.contains("modifyCardInput")) {
+            // if (!e.target.classList.contains("modifyCardInput")) {
+                if (!e.target.closest(".modifyCard")) {
                 let modifyCardForms = document.querySelectorAll(".modifyCard");
                 const cardsContents = document.querySelectorAll(".cardContent");
 
