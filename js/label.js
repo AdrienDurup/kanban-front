@@ -17,10 +17,30 @@ const labelModule = {
 
         const editForm = clone.querySelector(".editLabel");
         editForm.addEventListener("submit", labelModule.editLabel);
-        // if (label.card_has_label)
-        //     container = document.querySelector(`[data-card-id="${label.card_has_label.card_id}"]`);
+
+        /* DRAG AND DROP */
+        // labelMain.addEventListener("drag", labelModule.onDrag);
+        labelMain.addEventListener("dragstart", labelModule.onDragStart);
+       // labelMain.addEventListener("dragend", labelModule.onDragEnd);
+        // clone.addEventListener("dragstart", labelModule.onDragStart);
+
+        if (label.card_has_label)
+            container = document.querySelector(`[data-card-id="${label.card_has_label.card_id}"]`);
 
         container.appendChild(clone);
+    },
+    onDragStart: (e) => {
+        // e.preventDefault();
+        console.log("startDrag");
+        e.dataTransfer.setData("text/plain",e.target.getAttribute("data-label-id"));
+        console.log(e.dataTransfer.getData("text/plain"));
+
+    },
+    onDragEnd: (e) => {
+         console.log(e.dataTransfer.getData("application/json"));
+    },
+    onDrop: (e) => {
+
     },
     showEditLabel: (e) => {
         console.log(e.target.closest("#labelDictionary"));
@@ -94,10 +114,10 @@ const labelModule = {
             labelObj = await res2.json();
             // console.log(res);
             // console.log("container",document.querySelector(`[data-card-id="${cardId}"]`));
-            if (res){
-                     const card = document.querySelector(`[data-card-id="${cardId}"]`);
-                     const labelContainer=card.querySelector(".labelContainer");
-                       labelModule.makeLabelInDOM(labelObj, labelContainer);
+            if (res) {
+                const card = document.querySelector(`[data-card-id="${cardId}"]`);
+                const labelContainer = card.querySelector(".labelContainer");
+                labelModule.makeLabelInDOM(labelObj, labelContainer);
             };
 
         } catch (e) {
@@ -111,14 +131,14 @@ const labelModule = {
 
             if (res)
                 labelModule.deleteLabelFromCardDOM(cardId, labelId);
- 
+
         } catch (e) {
             console.error(e);
         };
     },
     deleteLabelFromCardDOM: (cardId, labelId) => {
         const card = document.querySelector(`[data-card-id="${cardId}"]`);
-        const label=card.querySelector(`[data-label-id="${labelId}"]`);
+        const label = card.querySelector(`[data-label-id="${labelId}"]`);
         label.parentElement.removeChild(label);
     },
     drawLabelsInDictionnary: async () => {

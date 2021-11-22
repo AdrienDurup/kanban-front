@@ -48,9 +48,9 @@
     <!-- Label template -->
     <template id="labelTemplate">
         <!-- <form action="" class="labelMain"> -->
-        <span class="tag labelMain" data-label-id="TI" data-label-color="TC">
+        <span class="tag labelMain" data-label-id="TI" data-label-color="TC" draggable="true">
             <div class="labelName"></div>
-            <form  class="is-hidden editLabel">
+            <form class="is-hidden editLabel">
                 <input type="text" name="name" class="ad-label-input nameInput" placeholder="nom">
                 <input type="text" name="color" class="ad-label-input colorInput" placeholder="couleur">
                 <!-- Pour activer la touche entrée on peut passer le bouton en invisible avec la class is-hidden,
@@ -61,7 +61,7 @@
         </span>
         <span>
 
-            
+
         </span>
         <!-- </form> -->
     </template>
@@ -71,7 +71,7 @@
 
     <!-- LIST template -->
     <template id="listTemplate">
-        <div class="column is-one-quarter panel listMain" data-list-id="A">
+        <div class="column is-one-quarter panel listMain" data-list-id="A" draggable="true">
             <div class="panel-heading has-background-info">
                 <div class="columns">
 
@@ -114,6 +114,8 @@
                 </div>
             </div>
             <div class="panel-block is-block has-background-light listContent">
+                <div class="card-drop-zone cardDropZone" ondragover="event.preventDefault()"
+                    ondragenter="event.preventDefault()"></div>
             </div>
         </div>
     </template>
@@ -122,7 +124,7 @@
 
     <!-- CARD template -->
     <template id="cardTemplate">
-        <div class="box cardMain" data-card-id="J">
+        <div class="box cardMain" data-card-id="J" draggable="true"  ondragover="event.preventDefault()" ondragenter="event.preventDefault()">
             <div class="tags labelContainer">
 
             </div>
@@ -138,8 +140,7 @@
                                 placeholder="Votre texte"></textarea>
                         </div>
                         <div class="control">
-                            <input type="text" class="input is-small modifyColorInput" name="color"
-                                placeholder="couleur">
+                            <input type="color" class="input is-small modifyColorInput" name="color" value="#F0F">
                         </div>
                         <div class="control">
                             <input type="text" class="input is-small addLabelInput" name="labels"
@@ -173,6 +174,7 @@
                 </div>
             </div>
         </div>
+        <div class="card-drop-zone cardDropZone" ondragover="event.preventDefault()" ondragenter="event.preventDefault()"></div>
     </template>
 
 

@@ -38,6 +38,19 @@ const app = {
             body: JSON.stringify(data)
         }
     },
+    rgbToHex:(RGBstring)=>{
+        const rgbValsRX = /\d{1,3}/g;
+        let newColor = RGBstring.match(rgbValsRX);
+        console.log(newColor);
+        newColor = newColor.map(el => {/* on convertit en number puis en chaine hexa */
+            let hexVal=Number(el).toString(16);
+            if(hexVal.length===1)//pour avoir un chiffre hexa sur 2 caractères
+            hexVal="0"+hexVal;
+            return hexVal;
+        });
+        console.log(newColor);
+        return `#${newColor.join("")}`;/* On récupère une couleur hexa */
+    },
     formToJson: (form) => {
         const data = new FormData(form);
         const keys = data.keys();//keys est un objet itérable. en tant qu’itérable il fonctionne avec for of (et non for in)
@@ -70,6 +83,13 @@ const app = {
     deleteFromDOM: (type, id) => {
         const DOMelement = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
         DOMelement.parentElement.removeChild(DOMelement);
+    },
+    globalDraggable:(boolString)=>{
+        const draggables=document.querySelectorAll(`.listMain,.cardMain,.labelMain`);
+        console.log(boolString,draggables.length);
+        draggables.forEach(el=>{
+           el.setAttribute("draggable", boolString);
+        });
     },
     addListeners: () => {
 
@@ -124,7 +144,13 @@ const app = {
 
                 // console.log(modifyCardForms, cardsContents);
                 app.swapElements(modifyCardForms, cardsContents);
+               
             };
+
+            /* On réactive le drag n drop si l’élément cliqué n’est pas enfant des forms spécifiés */
+             if(!e.target.closest("form.modifyCard,form.editLabel"))
+              app.globalDraggable("true");
+
         });
     },
 

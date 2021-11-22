@@ -2,12 +2,20 @@ const cardModule = {
     makeCardInDOM: (card) => {
         const template = document.getElementById("cardTemplate");
         const clone = document.importNode(template.content, true);
+
         const main = clone.querySelector(".cardMain");
         console.log(card.color);
         main.style.setProperty("background-color", card.color);
+
         const content = clone.querySelector(".cardContent");
         console.log(content);
         content.textContent = card.content;
+
+        // const labelContainer=clone.querySelector(".labelContainer");
+        // labelContainer.addEventListener("dragover",(e)=>{
+        //     e.preventDefault;
+        // });
+
         const list = document.querySelector(`[data-list-id="${card.list_id}"]`);
         console.log(list);
 
@@ -16,9 +24,18 @@ const cardModule = {
 
         const showHidePatchCardForm = clone.querySelector(".triggerPatchCard");
         const triggerDeleteCard = clone.querySelector(".triggerDeleteCard");
-        const patchCard = clone.querySelector(".modifyCard");
+        const editForm = clone.querySelector(".modifyCard");
         showHidePatchCardForm.addEventListener("submit", cardModule.handleShowHidePatchForm);
 
+        /* DRAG AND DROP */
+        /* avoid d&d on inputs : see below handleShowHidePatchForm*/
+
+        /* d&d events */
+        main.addEventListener("drop", cardModule.onDrop);
+        main.addEventListener("dragover", cardModule.onDragOver);
+
+
+        /* =========A DETACHER */
         triggerDeleteCard.addEventListener("submit", (e) => {
             e.preventDefault();
             const route = `${restRoot}/card/${card.id}`;
@@ -26,7 +43,7 @@ const cardModule = {
             app.deleteFromDOM("card", card.id);
         });
 
-        patchCard.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
+        editForm.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
@@ -34,10 +51,31 @@ const cardModule = {
         /* on rajoute les labels quand la carte est déja dans le DOM */
         if (card.labels) {
             card.labels.forEach(label => {
-                labelModule.makeLabelInDOM(label,main.querySelector(".labelContainer"));
+                labelModule.makeLabelInDOM(label, main.querySelector(".labelContainer"));
             });
         };
 
+    },
+    onDragStart: (e) => {
+
+    },
+    onDrop: (e) => {
+        e.preventDefault();
+        console.log("drop",e);
+        const labelId=e.dataTransfer.getData("text/plain");
+        const cardId=e.target.closest(".cardMain").getAttribute("data-card-id");
+        e.dataTransfer.clearData("text/plain");
+        console.log(labelId,cardId);
+        labelModule.createAssociation(cardId, labelId);
+    },
+    onDragOver: (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        const data=e.dataTransfer.getData("text/plain");
+        console.log("Over",data);
+    },
+    onDragEnter: (e) => {
+        e.preventDefault();
     },
     handleShowHidePatchForm: (e) => {
         e.preventDefault();
@@ -52,15 +90,23 @@ const cardModule = {
 
         /* on fournit la couleur au champ */
         const color = card.querySelector(".modifyColorInput");
-        color.value = card.style.getPropertyValue("background-color");
+        console.log("COLOR", card.style.getPropertyValue("background-color"));
+
+        const currentCardColor = card.style.getPropertyValue("background-color");
+        color.value = app.rgbToHex(currentCardColor);/* On récupère une couleur hexa */
+        console.log(color.value);
 
         /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
         les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */
         console.log(editForm.classList.contains("is-hidden"));
         if (editForm.classList.contains("is-hidden")) {
             app.swapElements(content, editForm);
+            /* disable card draggable when editForm becomes visible */
+            app.globalDraggable("false");
         } else {
             app.swapElements(editForm, content);
+            /* allow card draggable when editForm becomes invisible */
+            app.globalDraggable("true");
         };
 
     },
@@ -97,8 +143,11 @@ const cardModule = {
                     const labelNameFromDict = elInDict.querySelector(".labelName").textContent;
                     return labelNameFromDict === labelName;
                 });
-                const labelId = label.getAttribute(`data-label-id`);
-                labelModule.createAssociation(card.id, labelId);
+                if (label) {
+                    const labelId = label.getAttribute(`data-label-id`);
+                    labelModule.createAssociation(card.id, labelId);
+                };
+
             });
         } catch (e) {
             console.error(e);
