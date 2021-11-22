@@ -28,7 +28,8 @@
             <div class="columns">
 
                 <div class="column is-full">
-                    <div class="card-lists columns" id="listsWrapper">
+                    <div class="card-lists columns" id="listsWrapper" 
+                    ondragover="event.preventDefault()" ondragenter="event.preventDefault()">
 
                         <!-- NEW LIST button -->
                         <button class="column is-one-quarter button is-success" id="addListButton">
@@ -114,8 +115,8 @@
                 </div>
             </div>
             <div class="panel-block is-block has-background-light listContent">
-                <div class="card-drop-zone cardDropZone" ondragover="event.preventDefault()"
-                    ondragenter="event.preventDefault()"></div>
+                <!-- <div class="card-drop-zone cardDropZone" ondragover="event.preventDefault()"
+                    ondragenter="event.preventDefault()"></div> -->
             </div>
         </div>
     </template>
@@ -124,7 +125,8 @@
 
     <!-- CARD template -->
     <template id="cardTemplate">
-        <div class="box cardMain" data-card-id="J" draggable="true"  ondragover="event.preventDefault()" ondragenter="event.preventDefault()">
+        <div class="box cardMain" data-card-id="J" data-card-position="P"
+        draggable="true"  ondragover="event.preventDefault()" ondragenter="event.preventDefault()">
             <div class="tags labelContainer">
 
             </div>
@@ -174,7 +176,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-drop-zone cardDropZone" ondragover="event.preventDefault()" ondragenter="event.preventDefault()"></div>
+        <!-- <div class="card-drop-zone cardDropZone" data-carddropzone-id="DZ" ondragover="event.preventDefault()" ondragenter="event.preventDefault()"></div> -->
     </template>
 
 

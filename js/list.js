@@ -68,6 +68,9 @@ const listModule = {
             };
         };
     },
+    onDragStart: (e) => {
+
+    },
     deleteListFromDOM: (listId) => {
         const DOMlist = document.querySelector(`[data-list-id="${listId}"]`);
         DOMlist.parentElement.removeChild(DOMlist);

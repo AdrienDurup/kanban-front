@@ -32,15 +32,16 @@ const labelModule = {
     onDragStart: (e) => {
         // e.preventDefault();
         console.log("startDrag");
-        e.dataTransfer.setData("text/plain",e.target.getAttribute("data-label-id"));
+        const obj={
+            id:e.target.getAttribute("data-label-id"),
+            type:"label"
+        }
+        e.dataTransfer.setData("text/plain",JSON.stringify(obj));
         console.log(e.dataTransfer.getData("text/plain"));
 
     },
     onDragEnd: (e) => {
-         console.log(e.dataTransfer.getData("application/json"));
-    },
-    onDrop: (e) => {
-
+         console.log(e.dataTransfer.getData("text/plain"));
     },
     showEditLabel: (e) => {
         console.log(e.target.closest("#labelDictionary"));

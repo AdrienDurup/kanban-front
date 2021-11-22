@@ -6,6 +6,8 @@ const cardModule = {
         const main = clone.querySelector(".cardMain");
         console.log(card.color);
         main.style.setProperty("background-color", card.color);
+        main.setAttribute("data-card-id", card.id);
+        main.setAttribute("data-card-position", card.position);
 
         const content = clone.querySelector(".cardContent");
         console.log(content);
@@ -19,9 +21,6 @@ const cardModule = {
         const list = document.querySelector(`[data-list-id="${card.list_id}"]`);
         console.log(list);
 
-        const cardDOM = clone.querySelector(`[data-card-id="J"]`);
-        cardDOM.setAttribute("data-card-id", card.id);
-
         const showHidePatchCardForm = clone.querySelector(".triggerPatchCard");
         const triggerDeleteCard = clone.querySelector(".triggerDeleteCard");
         const editForm = clone.querySelector(".modifyCard");
@@ -33,7 +32,9 @@ const cardModule = {
         /* d&d events */
         main.addEventListener("drop", cardModule.onDrop);
         main.addEventListener("dragover", cardModule.onDragOver);
-
+        main.addEventListener("dragstart", cardModule.onDragStart);
+        // main.addEventListener("drag", cardModule.onDrag);
+        // main.addEventListener("dragend", cardModule.onDragEnd);
 
         /* =========A DETACHER */
         triggerDeleteCard.addEventListener("submit", (e) => {
@@ -45,6 +46,11 @@ const cardModule = {
 
         editForm.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
+        /* Attach D&D listeners on card */
+        main.addEventListener("drop", cardModule.onDrop_cardDropZone);
+        main.addEventListener("dragover", cardModule.onDragOver_cardDropZone);
+
+        /* Append */
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
 
@@ -57,22 +63,88 @@ const cardModule = {
 
     },
     onDragStart: (e) => {
+        // e.preventDefault();
+        console.log();
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+            id: e.target.getAttribute("data-card-id"),
+            type: "card"
+        }));
+        console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
+        // app.hideElement(e.target);
+    },
+    onDragEnd: (e) => {
+        e.preventDefault();
+        // app.showElement(e.target);
+    },
+    onDrop: async (e) => {
+        e.preventDefault();
+        console.log("drop", e);
+        const { id, type } = JSON.parse(e.dataTransfer.getData("text/plain"));
+        console.log("drop data", type, id);
+        if (type === "label") {
+            const labelId = id;
+            const cardId = e.target.closest(".cardMain").getAttribute("data-card-id");
+            e.dataTransfer.clearData("text/plain");
+            labelModule.createAssociation(cardId, labelId);
+        } else if (type === "card") {
+            const cardId = id;
+            const draggedCard = document.querySelector(`[data-card-id="${cardId}"]`);
+            const targetedCard = e.target.closest(".cardMain");
+
+            if (draggedCard) {
+
+                /* controler si dans la meme liste et check placer en avant en arrière */
+                if (targetedCard.parentNode === draggedCard.parentNode) {
+                    const draggedPosition = draggedCard.getAttribute("data-card-position");
+                    const targetedPosition = targetedCard.getAttribute("data-card-position");
+                    const moveIndex = draggedPosition - targetedPosition;
+                    const elements = [draggedCard, targetedCard];
+                    elements.sort();
+                    /* déplacer la carte après ou avant en fonction */
+                    let method = moveIndex < 0 ? "after" : "before";
+                    const draggedCardDetached = draggedCard.parentElement.removeChild(draggedCard);
+                    targetedCard[method](draggedCardDetached);
+                    const list = targetedCard.closest(".listMain");
+                    const cards = list.querySelectorAll(".cardMain");
+                    let newPositionIndex = 0;
+                    cards.forEach(async el => {
+                        el.setAttribute("data-card-position", newPositionIndex++);
+                        const id= el.dataset.cardId;
+                        const dataToSend = JSON.stringify({
+                            position: newPositionIndex
+                        });
+                        console.log(dataToSend);
+                        const res = await fetch(`${restRoot}/card/${id}`, app.setRequest("PATCH", dataToSend));
+                        const listObj = await res.json();
+                        console.log(listObj);
+                    });
+
+                };
+                /* faire entre les listes */
+
+            };
+            //cardModule.saveCardsPositions();
+        };
+
 
     },
-    onDrop: (e) => {
-        e.preventDefault();
-        console.log("drop",e);
-        const labelId=e.dataTransfer.getData("text/plain");
-        const cardId=e.target.closest(".cardMain").getAttribute("data-card-id");
-        e.dataTransfer.clearData("text/plain");
-        console.log(labelId,cardId);
-        labelModule.createAssociation(cardId, labelId);
+    saveCardsPositions: () => {
+
     },
     onDragOver: (e) => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        const data=e.dataTransfer.getData("text/plain");
-        console.log("Over",data);
+        //     e.dataTransfer.dropEffect = "move";
+        //     console.log(e.dataTransfer.getData("text/plain"));
+        //     const {type,id} =JSON.parse(e.dataTransfer.getData("text/plain"));
+        //      console.log("Over", type);
+        //    if(type==="card"){
+        //         const cardId =e.dataTransfer.getData("text/plain").id;
+        //         const targetedCard = e.target.closest(".cardMain").getAttribute("data-card-id");
+        //         const draggedCard=document.querySelector(`[data-card-id="${cardId}"]`);
+        //         /* controler si dans la meme liste */
+        //         e.target.parentNode.insertBefore(targetedCard,draggedCard);
+        //     };
+
     },
     onDragEnter: (e) => {
         e.preventDefault();

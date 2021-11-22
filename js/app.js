@@ -38,14 +38,14 @@ const app = {
             body: JSON.stringify(data)
         }
     },
-    rgbToHex:(RGBstring)=>{
+    rgbToHex: (RGBstring) => {
         const rgbValsRX = /\d{1,3}/g;
         let newColor = RGBstring.match(rgbValsRX);
         console.log(newColor);
         newColor = newColor.map(el => {/* on convertit en number puis en chaine hexa */
-            let hexVal=Number(el).toString(16);
-            if(hexVal.length===1)//pour avoir un chiffre hexa sur 2 caractères
-            hexVal="0"+hexVal;
+            let hexVal = Number(el).toString(16);
+            if (hexVal.length === 1)//pour avoir un chiffre hexa sur 2 caractères
+                hexVal = "0" + hexVal;
             return hexVal;
         });
         console.log(newColor);
@@ -84,14 +84,34 @@ const app = {
         const DOMelement = document.querySelector(`[data-${type.toLowerCase()}-id="${id}"]`);
         DOMelement.parentElement.removeChild(DOMelement);
     },
-    globalDraggable:(boolString)=>{
-        const draggables=document.querySelectorAll(`.listMain,.cardMain,.labelMain`);
-        console.log(boolString,draggables.length);
-        draggables.forEach(el=>{
-           el.setAttribute("draggable", boolString);
+    globalDraggable: (boolString) => {
+        const draggables = document.querySelectorAll(`.listMain,.cardMain,.labelMain`);
+        console.log(boolString, draggables.length);
+        draggables.forEach(el => {
+            el.setAttribute("draggable", boolString);
         });
     },
+    onDrop: (e) => {
+        // e.preventDefault();
+        // console.log("drop list");
+        // const listId = e.dataTransfer.getData("text/plain");
+        // const cardId = e.target.closest(".listMain").getAttribute("data-card-id");
+        // e.dataTransfer.clearData("text/plain");
+        // console.log(labelId, cardId);
+        // labelModule.createAssociation(cardId, labelId);
+    },
+    onDragOver: (e) => {
+        // e.preventDefault();
+        // e.dataTransfer.dropEffect = "move";
+        // const data = e.dataTransfer.getData("text/plain");
+        // console.log("Over", data);
+    },
+
     addListeners: () => {
+        /* Gestion drag & drop des listes */
+        const listContainer = document.getElementById("listsWrapper");
+        listContainer.addEventListener("drop", app.onDrop);
+        listContainer.addEventListener("dragover", app.onDragOver);
 
         /* gestion du click dans la fenetre */
         document.addEventListener("click", (e) => {
@@ -108,7 +128,7 @@ const app = {
             if (!e.target.closest(".editLabel")) {
                 const modifyListForms = document.querySelectorAll(".editLabel");
                 const labelNames = document.querySelectorAll(".labelName");
-                app.swapElements(modifyListForms,labelNames);
+                app.swapElements(modifyListForms, labelNames);
             };
 
             /* On vérifie si le bouton cliqué est le crayon d’édition de carte.
@@ -144,12 +164,12 @@ const app = {
 
                 // console.log(modifyCardForms, cardsContents);
                 app.swapElements(modifyCardForms, cardsContents);
-               
+
             };
 
             /* On réactive le drag n drop si l’élément cliqué n’est pas enfant des forms spécifiés */
-             if(!e.target.closest("form.modifyCard,form.editLabel"))
-              app.globalDraggable("true");
+            if (!e.target.closest("form.modifyCard,form.editLabel"))
+                app.globalDraggable("true");
 
         });
     },
