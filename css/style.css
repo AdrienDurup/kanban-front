@@ -58,8 +58,8 @@ button:hover{
 }
 /* CUSTOM SUR BULMA */
 .box:not(:last-child){
-    margin-bottom:0px;
+    margin-bottom:8px;
 }
 .panel-block {
-    padding:0 .70em;
+    padding:.70em;
 }

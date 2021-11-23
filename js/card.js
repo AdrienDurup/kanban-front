@@ -90,7 +90,8 @@ const cardModule = {
             const cardId = id;
             const draggedCard = document.querySelector(`[data-card-id="${cardId}"]`);
             const targetedCard = e.target.closest(".cardMain");
-
+            const list = targetedCard.closest(".listMain");
+            
             if (draggedCard) {
 
                 /* controler si dans la meme liste et check placer en avant en arrière */
@@ -104,31 +105,50 @@ const cardModule = {
                     let method = moveIndex < 0 ? "after" : "before";
                     const draggedCardDetached = draggedCard.parentElement.removeChild(draggedCard);
                     targetedCard[method](draggedCardDetached);
-                    const list = targetedCard.closest(".listMain");
-                    const cards = list.querySelectorAll(".cardMain");
-                    let newPositionIndex = 0;
-                    cards.forEach(async el => {
-                        el.setAttribute("data-card-position", newPositionIndex++);
-                        const id= el.dataset.cardId;
-                        const dataToSend = JSON.stringify({
-                            position: newPositionIndex
-                        });
-                        console.log(dataToSend);
-                        const res = await fetch(`${restRoot}/card/${id}`, app.setRequest("PATCH", dataToSend));
-                        const listObj = await res.json();
-                        console.log(listObj);
-                    });
+                    
+                    cardModule.saveCardsPositions(list);
+             /* si sur deux listes, ça fonctionne différemment :
+             la carte se place en fonction du pointeur par rapport au centre de la carte cible. Si au dessus se place au dessus,
+             Si en dessous se place en dessous. */
+                } else {
+                    const targetedCardBounding = targetedCard.getBoundingClientRect();//objet qui contient toutes les infos de positionnement
+                    const boxHeightCenter = (targetedCardBounding.bottom + targetedCardBounding.top) / 2;
+                    const method=e.clientY<boxHeightCenter?"before":"after";
+                    targetedCard[method](draggedCard);
 
+                    const list2 = targetedCard.closest(".listMain");
+                    const draggedCardListId=list.dataset.listId;
+                    const targetCardListId=list2.dataset.listId;
+                    const targetCardId=targetedCard.dataset.cardId;
+                    cardModule.changeListOfCard(cardId,draggedCardListId);
+                    cardModule.changeListOfCard(targetCardId,targetCardListId);
+                    cardModule.saveCardsPositions(list);
+                    cardModule.saveCardsPositions(list2);
                 };
-                /* faire entre les listes */
 
             };
-            //cardModule.saveCardsPositions();
         };
 
 
     },
-    saveCardsPositions: () => {
+    changeListOfCard:(cardId,listId)=>{
+        fetch(`${restRoot}/card/${cardId}`, app.setRequest("PATCH",{list_id:listId}));
+    },
+    saveCardsPositions: (listDOM) => {
+        console.log("save ?");
+        const cards = listDOM.querySelectorAll(".cardMain");
+        let newPositionIndex = 0;
+        cards.forEach( el => {
+            el.setAttribute("data-card-position", newPositionIndex++);
+            const id = el.dataset.cardId;
+            const dataToSend = {
+                position: newPositionIndex
+            };
+            const requestObject = app.setRequest("PATCH", dataToSend);
+            // console.log(requestObject);
+            fetch(`${restRoot}/card/${id}`, requestObject);
+            // console.log(await res.json());
+        });
 
     },
     onDragOver: (e) => {
