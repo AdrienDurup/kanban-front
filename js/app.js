@@ -108,11 +108,6 @@ const app = {
     },
 
     addListeners: () => {
-        /* Gestion drag & drop des listes */
-        const listContainer = document.getElementById("listsWrapper");
-        listContainer.addEventListener("drop", app.onDrop);
-        listContainer.addEventListener("dragover", app.onDragOver);
-
         /* gestion du click dans la fenetre */
         document.addEventListener("click", (e) => {
             /* si on clique en dehors d’un form de modification de titre de liste, on les ferme tous */

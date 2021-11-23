@@ -10,8 +10,9 @@ const listModule = {
         const template = document.getElementById("listTemplate");
         const clone = document.importNode(template.content, true);
         // console.log(clone);
-        const listMainDev = clone.querySelector(`[data-list-id="A"]`);
-        listMainDev.setAttribute("data-list-id", list.id);
+        const listMain = clone.querySelector(`.listMain`);
+        listMain.setAttribute("data-list-id", list.id);
+        listMain.setAttribute("data-list-position", list.position);
 
         /* on fournit le titre */
         const title = clone.querySelector(".listName");
@@ -20,7 +21,7 @@ const listModule = {
         const plus = clone.querySelector(".addCardToList");
         /* Gestion du bouton + pour ajouter une carte */
         plus.addEventListener("click", (e) => {
-           app.triggerModal("Card", { card_listId: list.id });
+            app.triggerModal("Card", { card_listId: list.id });
         });
 
         /* gestion du bouton poubelle pour supprimer une liste */
@@ -55,13 +56,14 @@ const listModule = {
             input.value = e.target.textContent;
             app.swapElements([e.target, trashcan], modify);
         });
-
-
-
-        // const container = document.getElementById("listsWrapper");
         document.getElementById("addListButton").before(clone);
-        // container;
-        // container.appendChild(clone);
+
+        /* DRAG AND DROP */
+        /* Attach D&D listeners on list */
+        listMain.addEventListener("dragstart", listModule.onDragStart);
+        listMain.addEventListener("drop", listModule.onDrop);
+        // listMain.addEventListener("dragover", listModule.onDragOver);
+
         if (list.cards) {
             for (const el of list.cards) {
                 cardModule.makeCardInDOM(el);
@@ -69,7 +71,69 @@ const listModule = {
         };
     },
     onDragStart: (e) => {
+        if(tools.checkType(e,"list")){
+                    const draggedId = e.target.getAttribute("data-list-id");
+        // if (draggedId) {
+            e.dataTransfer.setData("text/plain", JSON.stringify({
+                id: e.target.getAttribute("data-list-id"),
+                type: "list"
+            }));
+            console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
+        // } else {
+        //     console.error("dragged id undefined ?");
+        //};
 
+        };
+
+    },
+    onDrop: (e) => {
+        e.preventDefault();
+        console.log("drop", e.dataTransfer.getData("text/plain"));
+        const { id, type } = JSON.parse(e.dataTransfer.getData("text/plain"));
+        console.log("drop data", type, id);
+        if (type === "list") {
+            const draggedId = id;
+            const draggedList = document.querySelector(`[data-list-id="${draggedId}"]`);
+            const targetedList = e.target.closest(".listMain");
+            // const targetedId = targetedList.getAttribute("data-list-id");
+
+            if(draggedList!==targetedList){
+            e.dataTransfer.clearData("text/plain");
+
+            const draggedPosition = draggedList.dataset.listPosition;
+            const targetedPosition = targetedList.dataset.listPosition;
+            const moveIndex = draggedPosition - targetedPosition;
+            console.log(moveIndex);
+            /* déplacer la liste après ou avant en fonction */
+            let method = moveIndex < 0 ? "after" : "before";
+            console.log(moveIndex < 0);
+            console.log(method);
+            const draggedListDetached = draggedList.parentElement.removeChild(draggedList);
+            targetedList[method](draggedListDetached);
+
+            listModule.saveListsPositions();
+            };
+
+
+        };
+    },
+    onDragOver: (e) => {
+        e.preventDefault();
+
+
+    },
+    saveListsPositions: () => {
+        const lists = document.querySelectorAll(".listMain");
+        let newPositionIndex=0;
+        lists.forEach(el => {
+            el.setAttribute("data-list-position", newPositionIndex++);
+            const id = el.dataset.listId;
+            const dataToSend = {
+                position: newPositionIndex
+            };
+            const requestObject = app.setRequest("PATCH", dataToSend);
+            fetch(`${restRoot}/list/${id}`, requestObject);
+        });
     },
     deleteListFromDOM: (listId) => {
         const DOMlist = document.querySelector(`[data-list-id="${listId}"]`);

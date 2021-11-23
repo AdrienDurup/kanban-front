@@ -28,7 +28,6 @@ const cardModule = {
 
         /* DRAG AND DROP */
         /* avoid d&d on inputs : see below handleShowHidePatchForm*/
-
         /* d&d events */
         main.addEventListener("drop", cardModule.onDrop);
         main.addEventListener("dragover", cardModule.onDragOver);
@@ -46,10 +45,6 @@ const cardModule = {
 
         editForm.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
-        /* Attach D&D listeners on card */
-        main.addEventListener("drop", cardModule.onDrop_cardDropZone);
-        main.addEventListener("dragover", cardModule.onDragOver_cardDropZone);
-
         /* Append */
         const listContent = list.querySelector(".listContent");
         listContent.appendChild(clone);
@@ -62,15 +57,18 @@ const cardModule = {
         };
 
     },
+    checkType:(e,wantedType)=>{
+        const check=e.target.classList.contains(`${wantedType.toLowerCase()}Main`);
+        return check;
+    },
     onDragStart: (e) => {
-        // e.preventDefault();
-        console.log();
-        e.dataTransfer.setData("text/plain", JSON.stringify({
+       if(tools.checkType(e,"card")){
+                   e.dataTransfer.setData("text/plain", JSON.stringify({
             id: e.target.getAttribute("data-card-id"),
             type: "card"
         }));
         console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
-        // app.hideElement(e.target);
+       };
     },
     onDragEnd: (e) => {
         e.preventDefault();
@@ -92,15 +90,14 @@ const cardModule = {
             const targetedCard = e.target.closest(".cardMain");
             const list = targetedCard.closest(".listMain");
             
-            if (draggedCard) {
+            if (draggedCard
+                &&draggedCard!==targetedCard) {
 
                 /* controler si dans la meme liste et check placer en avant en arrière */
                 if (targetedCard.parentNode === draggedCard.parentNode) {
                     const draggedPosition = draggedCard.getAttribute("data-card-position");
                     const targetedPosition = targetedCard.getAttribute("data-card-position");
                     const moveIndex = draggedPosition - targetedPosition;
-                    const elements = [draggedCard, targetedCard];
-                    elements.sort();
                     /* déplacer la carte après ou avant en fonction */
                     let method = moveIndex < 0 ? "after" : "before";
                     const draggedCardDetached = draggedCard.parentElement.removeChild(draggedCard);
