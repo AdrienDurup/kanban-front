@@ -1,3 +1,7 @@
+const {tools}=require("./tools");
+const {restRoot}=require("./restRoot");
+const {cardModule}=require("./card");
+
 const listModule = {
     drawLists: async () => {
         const result = await fetch(`${restRoot}/list`);
@@ -21,7 +25,7 @@ const listModule = {
         const plus = clone.querySelector(".addCardToList");
         /* Gestion du bouton + pour ajouter une carte */
         plus.addEventListener("click", (e) => {
-            app.triggerModal("Card", { card_listId: list.id });
+            tools.triggerModal("Card", { card_listId: list.id });
         });
 
         /* gestion du bouton poubelle pour supprimer une liste */
@@ -29,7 +33,7 @@ const listModule = {
         trashcan.addEventListener("submit", async (e) => {
             e.preventDefault();
             const route = `${restRoot}/list/${list.id}`;
-            fetch(route, app.setRequest("DELETE", { id: list.id }));
+            fetch(route, tools.setRequest("DELETE", { id: list.id }));
             listModule.deleteListFromDOM(list.id);
         });
 
@@ -39,22 +43,22 @@ const listModule = {
         modify.addEventListener("submit", async (e) => {
             e.preventDefault();
             try {
-                const dataToSend = app.formToJson(e.target);
+                const dataToSend = tools.formToJson(e.target);
                 const route = `${restRoot}/list/${list.id}`;
                 console.log(route);
-                await fetch(route, app.setRequest("PATCH", dataToSend));
+                await fetch(route, tools.setRequest("PATCH", dataToSend));
                 title.textContent = dataToSend.name;
             } catch (e) {
                 console.error(e);
             } finally {
-                app.swapElements(modify, [title, trashcan]);
+                tools.swapElements(modify, [title, trashcan]);
             };
         });
 
         title.addEventListener("dblclick", (e) => {
             const input = modify.querySelector(".modifyListInput");
             input.value = e.target.textContent;
-            app.swapElements([e.target, trashcan], modify);
+            tools.swapElements([e.target, trashcan], modify);
         });
         document.getElementById("addListButton").before(clone);
 
@@ -131,7 +135,7 @@ const listModule = {
             const dataToSend = {
                 position: newPositionIndex
             };
-            const requestObject = app.setRequest("PATCH", dataToSend);
+            const requestObject = tools.setRequest("PATCH", dataToSend);
             fetch(`${restRoot}/list/${id}`, requestObject);
         });
     },
@@ -143,7 +147,7 @@ const listModule = {
         /* gestion du bouton ajouter des listes */
         const button = document.getElementById("addListButton");
         button.addEventListener("click", (e) => {
-            app.triggerModal("List");
+            tools.triggerModal("List");
         });
 
         /* gestion boutons pour ajouter une carte */
@@ -153,7 +157,7 @@ const listModule = {
         //     console.log("element peopouepoé",el);
         //     el.addEventListener("click", (e) => {
         //         console.log("plus", e);
-        //         app.triggerModal("Card", { card_listId: list.id });
+        //         tools.triggerModal("Card", { card_listId: list.id });
         //     });
         //     console.log(el.addEventListener);
         // })
@@ -168,13 +172,13 @@ const listModule = {
         // console.log("close", closeButtons);
         for (const button of closeButtons) {
             button.addEventListener("click", (e) => {
-                app.killModal();
+                tools.killModal();
             });
         };
 
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const dataToSend = app.formToJson(e.target);
+            const dataToSend = tools.formToJson(e.target);
 
             /* On récupère la prochaine position de fin*/
             const position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
@@ -184,14 +188,14 @@ const listModule = {
                 return;
 
             console.log(dataToSend);
-            let res = await fetch(`${restRoot}/${el.toLowerCase()}`, app.setRequest("POST", dataToSend));
+            let res = await fetch(`${restRoot}/${el.toLowerCase()}`, tools.setRequest("POST", dataToSend));
             res = await res.json();
 
             /* La partie qui change d’une modale à l’autre */
             listModule.makeListInDOM(res);
 
-            app.killModal();
+            tools.killModal();
         });
     }
 };
-//export {listModule};
+module.exports= {listModule};

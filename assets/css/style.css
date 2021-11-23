@@ -27,10 +27,20 @@ button:hover{
     border-radius: 4px;
     padding: .2rem;
 }
+.ad-label-form{
+    display: flex;
+    align-items:center ;
+}
 .ad-label-input{
     display: inline;
     padding: unset; 
     width:6rem;
+    height:1rem;
+}
+.ad-label-input--color{
+    appearance: unset;
+    display: inline-block;
+    border: none;
 }
 .ad-label-button{
     box-shadow: none;

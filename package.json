@@ -1,0 +1,28 @@
+{
+  "name": "s07-okanban-front-red-adriendurup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx browserify -e src/app.js -o assets/js/bundle.js --debug",
+    "prod":"npx browserify -p tinyify -e src/app.js | uglifyjs -c > assets/js/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/O-clock-XIII/S07-oKanban-front-RED-AdrienDurup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/O-clock-XIII/S07-oKanban-front-RED-AdrienDurup/issues"
+  },
+  "homepage": "https://github.com/O-clock-XIII/S07-oKanban-front-RED-AdrienDurup#readme",
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "tinyify": "^3.0.0",
+    "uglify-js": "^3.14.3",
+    "uglifyify": "^5.0.2"
+  }
+}

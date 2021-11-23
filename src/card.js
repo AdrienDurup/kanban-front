@@ -1,3 +1,7 @@
+const {tools}=require("./tools");
+const {restRoot}=require("./restRoot");
+const {labelModule}=require("./label"); 
+
 const cardModule = {
     makeCardInDOM: (card) => {
         const template = document.getElementById("cardTemplate");
@@ -36,12 +40,7 @@ const cardModule = {
         // main.addEventListener("dragend", cardModule.onDragEnd);
 
         /* =========A DETACHER */
-        triggerDeleteCard.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const route = `${restRoot}/card/${card.id}`;
-            fetch(route, app.setRequest("DELETE", { id: card.id }));
-            app.deleteFromDOM("card", card.id);
-        });
+        triggerDeleteCard.addEventListener("submit",cardModule.handleDeleteCard);
 
         editForm.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
@@ -57,10 +56,6 @@ const cardModule = {
         };
 
     },
-    checkType:(e,wantedType)=>{
-        const check=e.target.classList.contains(`${wantedType.toLowerCase()}Main`);
-        return check;
-    },
     onDragStart: (e) => {
        if(tools.checkType(e,"card")){
                    e.dataTransfer.setData("text/plain", JSON.stringify({
@@ -72,7 +67,7 @@ const cardModule = {
     },
     onDragEnd: (e) => {
         e.preventDefault();
-        // app.showElement(e.target);
+        // tools.showElement(e.target);
     },
     onDrop: async (e) => {
         e.preventDefault();
@@ -129,7 +124,7 @@ const cardModule = {
 
     },
     changeListOfCard:(cardId,listId)=>{
-        fetch(`${restRoot}/card/${cardId}`, app.setRequest("PATCH",{list_id:listId}));
+        fetch(`${restRoot}/card/${cardId}`, tools.setRequest("PATCH",{list_id:listId}));
     },
     saveCardsPositions: (listDOM) => {
         console.log("save ?");
@@ -141,26 +136,11 @@ const cardModule = {
             const dataToSend = {
                 position: newPositionIndex
             };
-            const requestObject = app.setRequest("PATCH", dataToSend);
+            const requestObject = tools.setRequest("PATCH", dataToSend);
             // console.log(requestObject);
             fetch(`${restRoot}/card/${id}`, requestObject);
             // console.log(await res.json());
         });
-
-    },
-    onDragOver: (e) => {
-        e.preventDefault();
-        //     e.dataTransfer.dropEffect = "move";
-        //     console.log(e.dataTransfer.getData("text/plain"));
-        //     const {type,id} =JSON.parse(e.dataTransfer.getData("text/plain"));
-        //      console.log("Over", type);
-        //    if(type==="card"){
-        //         const cardId =e.dataTransfer.getData("text/plain").id;
-        //         const targetedCard = e.target.closest(".cardMain").getAttribute("data-card-id");
-        //         const draggedCard=document.querySelector(`[data-card-id="${cardId}"]`);
-        //         /* controler si dans la meme liste */
-        //         e.target.parentNode.insertBefore(targetedCard,draggedCard);
-        //     };
 
     },
     onDragEnter: (e) => {
@@ -182,20 +162,20 @@ const cardModule = {
         console.log("COLOR", card.style.getPropertyValue("background-color"));
 
         const currentCardColor = card.style.getPropertyValue("background-color");
-        color.value = app.rgbToHex(currentCardColor);/* On récupère une couleur hexa */
+        color.value = tools.rgbToHex(currentCardColor);/* On récupère une couleur hexa */
         console.log(color.value);
 
         /* Attention : event sur la fenetre ET sur le bouton d’affichage de editForm :
-        les deux peuvent s’annuler.Gestion de la fermeture sur app.listeners */
+        les deux peuvent s’annuler.Gestion de la fermeture sur tools.listeners */
         console.log(editForm.classList.contains("is-hidden"));
         if (editForm.classList.contains("is-hidden")) {
-            app.swapElements(content, editForm);
+            tools.swapElements(content, editForm);
             /* disable card draggable when editForm becomes visible */
-            app.globalDraggable("false");
+            tools.globalDraggable("false");
         } else {
-            app.swapElements(editForm, content);
+            tools.swapElements(editForm, content);
             /* allow card draggable when editForm becomes invisible */
-            app.globalDraggable("true");
+            tools.globalDraggable("true");
         };
 
     },
@@ -205,7 +185,7 @@ const cardModule = {
         let content;
         try {
             console.log("patching");
-            const dataToSend = app.formToJson(e.target);
+            const dataToSend = tools.formToJson(e.target);
             /* on récupère la string des labels */
             let labelNames = dataToSend.labels;
 
@@ -216,7 +196,7 @@ const cardModule = {
             content = cardDOM.querySelector(".cardContent");
             patchCard = e.target.closest(".cardMain").querySelector(".modifyCard");
             console.log(dataToSend);
-            await fetch(route, app.setRequest("PATCH", dataToSend));
+            await fetch(route, tools.setRequest("PATCH", dataToSend));
             content.textContent = dataToSend.content;
             cardDOM.style.setProperty("background-color", dataToSend.color);
 
@@ -241,9 +221,16 @@ const cardModule = {
         } catch (e) {
             console.error(e);
         } finally {
-            app.swapElements(patchCard, content);
+            tools.swapElements(patchCard, content);
         };
 
+    },
+    handleDeleteCard:(e)=>{
+            e.preventDefault();
+            const cardId=e.target.closest(".cardMain").dataset.cardId;
+            const route = `${restRoot}/card/${cardId}`;
+            fetch(route, tools.setRequest("DELETE", { id: cardId }));
+            tools.deleteFromDOM("card", cardId);
     },
     addListeners: () => {
         const el = "Card";
@@ -256,7 +243,7 @@ const cardModule = {
         // console.log("close", closeButtons);
         for (const button of closeButtons) {
             button.addEventListener("click", (e) => {
-                app.killModal();
+                tools.killModal();
             });
         };
 
@@ -266,7 +253,7 @@ const cardModule = {
             try {
                 console.log("modal submit");
                 e.preventDefault();
-                const dataToSend = app.formToJson(e.target);
+                const dataToSend = tools.formToJson(e.target);
 
                 /* On récupère la prochaine position de fin*/
                 let position = document.querySelectorAll(`.${el.toLowerCase()}Main`).length;
@@ -280,14 +267,14 @@ const cardModule = {
                 //     return;
 
                 console.log(dataToSend);
-                let res = await fetch(`${restRoot}/${el.toLowerCase()}`, app.setRequest("POST", dataToSend));
+                let res = await fetch(`${restRoot}/${el.toLowerCase()}`, tools.setRequest("POST", dataToSend));
                 res = await res.json();
                 console.log(res);
                 /* La partie qui change d’une modale à l’autre */
                 if (res)
                     cardModule.makeCardInDOM(res);
 
-                app.killModal();
+                tools.killModal();
             } catch (e) {
                 console.log(e);
             };
@@ -296,4 +283,4 @@ const cardModule = {
 
     },
 };
-//export {cardModule};
+module.exports= {cardModule};
