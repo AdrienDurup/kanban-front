@@ -66,11 +66,17 @@ const labelModule = {
             res = await res.json();
             console.log(res);
             if (res[0] === 1) {
-                const labelName = e.target.parentElement.querySelector(".labelName");
-                labelName.textContent = data.name;
-                labelName.parentElement.style.setProperty("background-color", data.color);
-                labelName.textContent = data.name;
-                tools.swapElements(e.target, labelName);
+                /* On update la view sur toutes les instances */
+                const labels=document.querySelectorAll(`[data-label-id="${labelId}"]`);
+                labels.forEach(el=>{
+                    const labelName = el.querySelector(".labelName");
+                    labelName.textContent = data.name;
+                    el.style.setProperty("background-color", data.color);
+                });
+                /* on ferme le formulaire */
+                const LabelInDictName=e.target.closest(".labelMain").querySelector(".labelName");
+                console.log("LABELS",LabelInDictName);
+                tools.swapElements(e.target, LabelInDictName);
             };
 
         } catch (e) {

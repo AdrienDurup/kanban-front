@@ -1,6 +1,6 @@
-const {tools}=require("./tools");
-const {restRoot}=require("./restRoot");
-const {labelModule}=require("./label"); 
+const { tools } = require("./tools");
+const { restRoot } = require("./restRoot");
+const { labelModule } = require("./label");
 
 const cardModule = {
     makeCardInDOM: (card) => {
@@ -40,7 +40,7 @@ const cardModule = {
         // main.addEventListener("dragend", cardModule.onDragEnd);
 
         /* =========A DETACHER */
-        triggerDeleteCard.addEventListener("submit",cardModule.handleDeleteCard);
+        triggerDeleteCard.addEventListener("submit", cardModule.handleDeleteCard);
 
         editForm.addEventListener("submit", (e) => { e.preventDefault(); cardModule.handlePatchCard(e, card); });
 
@@ -57,13 +57,13 @@ const cardModule = {
 
     },
     onDragStart: (e) => {
-       if(tools.checkType(e,"card")){
-                   e.dataTransfer.setData("text/plain", JSON.stringify({
-            id: e.target.getAttribute("data-card-id"),
-            type: "card"
-        }));
-        console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
-       };
+        if (tools.checkType(e, "card")) {
+            e.dataTransfer.setData("text/plain", JSON.stringify({
+                id: e.target.getAttribute("data-card-id"),
+                type: "card"
+            }));
+            console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
+        };
     },
     onDragEnd: (e) => {
         e.preventDefault();
@@ -76,17 +76,20 @@ const cardModule = {
         console.log("drop data", type, id);
         if (type === "label") {
             const labelId = id;
-            const cardId = e.target.closest(".cardMain").getAttribute("data-card-id");
-            e.dataTransfer.clearData("text/plain");
-            labelModule.createAssociation(cardId, labelId);
+            /* Si l’association existe déjà on ne fait rien */
+            if (!e.target.querySelector(`[data-label-id="${labelId}"]`)) {
+                const cardId = e.target.closest(".cardMain").getAttribute("data-card-id");
+                e.dataTransfer.clearData("text/plain");
+                labelModule.createAssociation(cardId, labelId);
+            };
         } else if (type === "card") {
             const cardId = id;
             const draggedCard = document.querySelector(`[data-card-id="${cardId}"]`);
             const targetedCard = e.target.closest(".cardMain");
             const list = targetedCard.closest(".listMain");
-            
+
             if (draggedCard
-                &&draggedCard!==targetedCard) {
+                && draggedCard !== targetedCard) {
 
                 /* controler si dans la meme liste et check placer en avant en arrière */
                 if (targetedCard.parentNode === draggedCard.parentNode) {
@@ -97,23 +100,23 @@ const cardModule = {
                     let method = moveIndex < 0 ? "after" : "before";
                     const draggedCardDetached = draggedCard.parentElement.removeChild(draggedCard);
                     targetedCard[method](draggedCardDetached);
-                    
+
                     cardModule.saveCardsPositions(list);
-             /* si sur deux listes, ça fonctionne différemment :
-             la carte se place en fonction du pointeur par rapport au centre de la carte cible. Si au dessus se place au dessus,
-             Si en dessous se place en dessous. */
+                    /* si sur deux listes, ça fonctionne différemment :
+                    la carte se place en fonction du pointeur par rapport au centre de la carte cible. Si au dessus se place au dessus,
+                    Si en dessous se place en dessous. */
                 } else {
                     const targetedCardBounding = targetedCard.getBoundingClientRect();//objet qui contient toutes les infos de positionnement
                     const boxHeightCenter = (targetedCardBounding.bottom + targetedCardBounding.top) / 2;
-                    const method=e.clientY<boxHeightCenter?"before":"after";
+                    const method = e.clientY < boxHeightCenter ? "before" : "after";
                     targetedCard[method](draggedCard);
 
                     const list2 = targetedCard.closest(".listMain");
-                    const draggedCardListId=list.dataset.listId;
-                    const targetCardListId=list2.dataset.listId;
-                    const targetCardId=targetedCard.dataset.cardId;
-                    cardModule.changeListOfCard(cardId,draggedCardListId);
-                    cardModule.changeListOfCard(targetCardId,targetCardListId);
+                    const draggedCardListId = list.dataset.listId;
+                    const targetCardListId = list2.dataset.listId;
+                    const targetCardId = targetedCard.dataset.cardId;
+                    cardModule.changeListOfCard(cardId, draggedCardListId);
+                    cardModule.changeListOfCard(targetCardId, targetCardListId);
                     cardModule.saveCardsPositions(list);
                     cardModule.saveCardsPositions(list2);
                 };
@@ -123,14 +126,14 @@ const cardModule = {
 
 
     },
-    changeListOfCard:(cardId,listId)=>{
-        fetch(`${restRoot}/card/${cardId}`, tools.setRequest("PATCH",{list_id:listId}));
+    changeListOfCard: (cardId, listId) => {
+        fetch(`${restRoot}/card/${cardId}`, tools.setRequest("PATCH", { list_id: listId }));
     },
     saveCardsPositions: (listDOM) => {
         console.log("save ?");
         const cards = listDOM.querySelectorAll(".cardMain");
         let newPositionIndex = 0;
-        cards.forEach( el => {
+        cards.forEach(el => {
             el.setAttribute("data-card-position", newPositionIndex++);
             const id = el.dataset.cardId;
             const dataToSend = {
@@ -225,12 +228,12 @@ const cardModule = {
         };
 
     },
-    handleDeleteCard:(e)=>{
-            e.preventDefault();
-            const cardId=e.target.closest(".cardMain").dataset.cardId;
-            const route = `${restRoot}/card/${cardId}`;
-            fetch(route, tools.setRequest("DELETE", { id: cardId }));
-            tools.deleteFromDOM("card", cardId);
+    handleDeleteCard: (e) => {
+        e.preventDefault();
+        const cardId = e.target.closest(".cardMain").dataset.cardId;
+        const route = `${restRoot}/card/${cardId}`;
+        fetch(route, tools.setRequest("DELETE", { id: cardId }));
+        tools.deleteFromDOM("card", cardId);
     },
     addListeners: () => {
         const el = "Card";
@@ -283,4 +286,4 @@ const cardModule = {
 
     },
 };
-module.exports= {cardModule};
+module.exports = { cardModule };
