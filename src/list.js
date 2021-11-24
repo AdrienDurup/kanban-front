@@ -1,6 +1,6 @@
-const {tools}=require("./tools");
-const {restRoot}=require("./restRoot");
-const {cardModule}=require("./card");
+const { tools } = require("./tools");
+const { restRoot } = require("./restRoot");
+const { cardModule } = require("./card");
 
 const listModule = {
     drawLists: async () => {
@@ -75,17 +75,17 @@ const listModule = {
         };
     },
     onDragStart: (e) => {
-        if(tools.checkType(e,"list")){
-                    const draggedId = e.target.getAttribute("data-list-id");
-        // if (draggedId) {
+        if (tools.checkType(e, "list")) {
+            const draggedId = e.target.getAttribute("data-list-id");
+            // if (draggedId) {
             e.dataTransfer.setData("text/plain", JSON.stringify({
                 id: e.target.getAttribute("data-list-id"),
                 type: "list"
             }));
             console.log(JSON.parse(e.dataTransfer.getData("text/plain")));
-        // } else {
-        //     console.error("dragged id undefined ?");
-        //};
+            // } else {
+            //     console.error("dragged id undefined ?");
+            //};
 
         };
 
@@ -101,23 +101,32 @@ const listModule = {
             const targetedList = e.target.closest(".listMain");
             // const targetedId = targetedList.getAttribute("data-list-id");
 
-            if(draggedList!==targetedList){
-            e.dataTransfer.clearData("text/plain");
+            if (draggedList !== targetedList) {
+                e.dataTransfer.clearData("text/plain");
 
-            const draggedPosition = draggedList.dataset.listPosition;
-            const targetedPosition = targetedList.dataset.listPosition;
-            const moveIndex = draggedPosition - targetedPosition;
-            console.log(moveIndex);
-            /* déplacer la liste après ou avant en fonction */
-            let method = moveIndex < 0 ? "after" : "before";
-            console.log(moveIndex < 0);
-            console.log(method);
-            const draggedListDetached = draggedList.parentElement.removeChild(draggedList);
-            targetedList[method](draggedListDetached);
+                const draggedPosition = draggedList.dataset.listPosition;
+                const targetedPosition = targetedList.dataset.listPosition;
+                const moveIndex = draggedPosition - targetedPosition;
+                console.log(moveIndex);
+                /* déplacer la liste après ou avant en fonction */
+                let method = moveIndex < 0 ? "after" : "before";
+                console.log(moveIndex < 0);
+                console.log(method);
+                const draggedListDetached = draggedList.parentElement.removeChild(draggedList);
+                targetedList[method](draggedListDetached);
 
-            listModule.saveListsPositions();
+                listModule.saveListsPositions();
             };
 
+
+        } else if (type === "card"
+            /* check if list is card free */
+            && !e.target.querySelector(".cardMain")) {
+            console.log("add first card ?");
+            const draggedCard = document.querySelector(`[data-card-id="${id}"]`);
+            const draggedListDetached = draggedCard.parentElement.removeChild(draggedCard);
+            e.target.closest(".listMain").querySelector(".listContent").append(draggedListDetached);
+            listModule.saveListsPositions();
 
         };
     },
@@ -128,7 +137,7 @@ const listModule = {
     },
     saveListsPositions: () => {
         const lists = document.querySelectorAll(".listMain");
-        let newPositionIndex=0;
+        let newPositionIndex = 0;
         lists.forEach(el => {
             el.setAttribute("data-list-position", newPositionIndex++);
             const id = el.dataset.listId;
@@ -198,4 +207,4 @@ const listModule = {
         });
     }
 };
-module.exports= {listModule};
+module.exports = { listModule };
