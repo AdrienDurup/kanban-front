@@ -6,3 +6,69 @@ body {
 .card-lists {
     overflow-x: auto;
 }
+input{
+    display: block;
+    border: none;
+    background-color: whitesmoke;
+}
+button{
+    border: none;
+    box-shadow: 1px 1px 0px gray;
+}
+button:hover{
+    color: gray;
+}
+.ad_button-reset{
+    background-color: unset;
+    box-shadow: unset;
+}
+.labelMain{
+    border-radius: 4px;
+    padding: .2rem;
+}
+.ad-label-form{
+    display: flex;
+    align-items:center ;
+}
+.ad-label-input{
+    display: inline;
+    padding: unset; 
+    width:6rem;
+    height:1rem;
+}
+.ad-label-input--color{
+    appearance: unset;
+    display: inline-block;
+    border: none;
+}
+.ad-label-button{
+    box-shadow: none;
+    padding: 0 2px;  
+    border: none;
+    color: white;
+    background-color: rgba(10,10,10,.2);
+}
+.ad-label-button:hover{
+    color: white;
+}
+.ad-label-button:hover{
+    color: white;
+    background-color: rgba(10,10,10,.3);
+}
+.ad-label-button:active{
+    color: white;
+    background-color: rgba(10,10,10,.4);
+}
+.card-drop-zone{
+    height: 1.5rem;
+}
+.card-drop-zone--first{
+    height: 1.5rem;  
+}
+/* CUSTOM SUR BULMA */
+.box:not(:last-child){
+    margin-bottom:8px;
+}
+.panel-block {
+    padding:.70em;
+}
